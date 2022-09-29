@@ -9,7 +9,7 @@ A discrete event simulation showing that the future for electric vehicles is bat
 <p align="center">
   <img alt="Light" src="/images/graph1.png" width="33%">
 &nbsp; &nbsp; &nbsp; &nbsp;
-  <img alt="Dark" src="/images/graph2.png" width="33%">
+  <img alt="Dark" src="/images/graph2.png" width="33%" rotate="90">
 &nbsp; &nbsp; &nbsp; &nbsp;
   <img alt="Dark" src="/images/graph3.png" width="33%">
 </p>
