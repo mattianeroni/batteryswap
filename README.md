@@ -29,7 +29,7 @@ Batteries sharing is also a more ***environmental and social friendly*** scenari
 
 This future scenario requires a standardization of batteries and their clusterization in few categories, but, unfortunately, cars producers are going in a different direction, each producing their own batteries. Fortunately, this scenario boasts the support of major companies, like the American startup [Ample](https://ample.com/) (which is supported by a leading group in the energy sector like [Shell](https://www.shell.com/)).
 
-<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 ## Roads Network
@@ -38,16 +38,16 @@ The download of roads networks is made by interrogating [Open Street Map](https:
 
 ![graph1](/images/graph1.png)  ![graph2](/images/graph2.png) 
 
-<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 ## Simulation
 
-<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Results
 
-<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Author
 
@@ -60,8 +60,8 @@ Website: https://mattianeroni.github.io
 Linkedin: https://www.linkedin.com/in/mattia-neroni-081965101/
 
 
-<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Publication
 
-<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
