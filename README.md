@@ -8,6 +8,10 @@ This repository consists of a discrete event simulation showing that electric ve
 
 - [Overview](#overview)
 - [Roads Network](#roads-network)
+- [Simulation](#simulation)
+- [Results](#results)
+- [Author](#author)
+- [Publication](#publication)
 
 
 
@@ -33,3 +37,31 @@ This future scenario requires a standardization of batteries and their clusteriz
 The download of roads networks is made by interrogating [Open Street Map](https://www.openstreetmap.org/#map=6/42.088/12.564) through [OSMnx](https://osmnx.readthedocs.io/en/stable/). This process might be time consuming, hence some sample extractions are saved in [graphs](/graphs/) directory as [GraphML](http://graphml.graphdrawing.org/) and can be read by using [NetworkX](https://networkx.org/).
 
 ![graph1](/images/graph1.png)  ![graph2](/images/graph2.png) 
+
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+
+
+## Simulation
+
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+
+## Results
+
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+
+## Author
+
+***Mattia Neroni, Ph.D., Eng.***
+
+Email: mattianeroni@yahoo.it
+
+Website: https://mattianeroni.github.io
+
+Linkedin: https://www.linkedin.com/in/mattia-neroni-081965101/
+
+
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+
+## Publication
+
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
