@@ -2,8 +2,7 @@
 
 This repository consists of a discrete event simulation showing that electric vehicles cannot exist without ***batteries sharing*** (also known as ***batteries swapping***). Batteries sharing is not just a more environmental and social friendly solution, it is also more efficient and more beneficial for traffic mitigation.
 
-![share]()
-<img src="/images/share.jpg" width="30%" height="30%">
+<img src="/images/share.jpg" width="30%" height="30%" class="center">
 
 ## Table of contents
 
