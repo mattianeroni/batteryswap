@@ -1,10 +1,16 @@
-from graph import Graph
+import functools 
+
+import utils 
 
 
 
-G = Graph.from_file("./graphs/Test.graphml", 0.1)
 
-print(G)
+# Simulation variables
+GRAPH_FILE = "./graphs/Test.graphml"            # Previously extracted graph to use 
+SIM_TIME = 144_000                              # Simulation time 
+N_VEHICLES = 30                                 # Number of travelling vehicles 
+PERCENTAGE_STATIONS = 0.2                       # Percentage of nodes with a charging station
+N_BATTERIES = 3                                 # Number of battery types           
 
 
 
