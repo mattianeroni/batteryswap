@@ -6,7 +6,7 @@ class Station (simpy.Resource):
 
     """ An instance of this class represents a charging station """
 
-    def __init__(self, env, capacity, n_btypes, swaptime, power, waitcharge):
+    def __init__(self, env, capacity, n_btypes, swaptime, power, waitcharge=True):
         """
         :param env: The simulation environment.
         :param capacity: The number of vehicles the station can process together.
