@@ -7,7 +7,6 @@ class Graph(nx.MultiDiGraph):
 
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
-        #self.i = 44
         return self
     
     @classmethod 
@@ -28,17 +27,17 @@ class Graph(nx.MultiDiGraph):
             
             # Node is not a station
             if random.random() > charging_stations:
-                node["station"] = False
+                node["is_station"] = False
                 node["startp"] = random.random()
                 node["endp"] = random.random()
                 continue 
             
             # Node is a station
-            node["station"] = True
+            node["is_station"] = True
             node["startp"] = 0.0
             node["endp"] = 0.0
             node["swap_time"] = swap_time 
-            
+
 
 
 
@@ -46,12 +45,12 @@ class Graph(nx.MultiDiGraph):
 
 
     @classmethod
-    def from_file(cls, filename, charging_stations):
+    def from_file(cls, filename, charging_stations, swap_time):
         """
         Same as from_nx_graph but it reads the MultiDiGraph from a 
         GraphML file.
         """
         nxG = ox.load_graphml(filename)
-        return cls.from_nx_graph(nxG, charging_stations)
+        return cls.from_nx_graph(nxG, charging_stations, swap_time)
 
     
