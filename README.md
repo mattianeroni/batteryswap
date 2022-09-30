@@ -36,7 +36,12 @@ This future scenario requires a standardization of batteries and their clusteriz
 
 The download of roads networks is made by interrogating [Open Street Map](https://www.openstreetmap.org/#map=6/42.088/12.564) through [OSMnx](https://osmnx.readthedocs.io/en/stable/). This process might be time consuming, hence some sample extractions are saved in [graphs](/graphs/) directory as [GraphML](http://graphml.graphdrawing.org/) and can be read by using [NetworkX](https://networkx.org/).
 
-![graph1](/images/graph1.png)  ![graph2](/images/graph2.png) 
+<p align="center">
+  <img src="/images/graph1.png" width="45%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img src="/images/graph2.png" width="45%">
+</p>
+<!-- ![graph1](/images/graph1.png)  ![graph2](/images/graph2.png) --> 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
