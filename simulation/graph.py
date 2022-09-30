@@ -5,10 +5,12 @@ import random
 
 class Graph(nx.MultiDiGraph):
 
+
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
         return self
     
+
     @classmethod 
     def from_nx_graph(cls, nxG, charging_stations, swap_time):
         """
@@ -22,17 +24,17 @@ class Graph(nx.MultiDiGraph):
         G = cls.__new__(cls)
         G.__dict__.update(nxG.__dict__)
 
-        # Initialise stations
+        # Initialise charging stations
         for _, node in G.nodes.items():
             
-            # Node is not a station
+            # Node is not a charging station
             if random.random() > charging_stations:
                 node["is_station"] = False
                 node["startp"] = random.random()
                 node["endp"] = random.random()
                 continue 
             
-            # Node is a station
+            # Node is a charging station
             node["is_station"] = True
             node["startp"] = 0.0
             node["endp"] = 0.0
