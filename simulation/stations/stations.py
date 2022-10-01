@@ -1,4 +1,5 @@
-import simpy 
+#import simpy 
+from .charger import Charger
 
 
 
@@ -29,11 +30,6 @@ class Station (simpy.Resource):
         self.swaptime = swaptime 
         self.power = power 
         self.waitcharge = waitcharge 
-
-        self.incharge = {
-                btype: simpy.Store(env, capacity=n)
-            for btype, n in n_btypes
-        }
 
         self.batteries = {
                 btype: simpy.Store(env, capacity=n)
