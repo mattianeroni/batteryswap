@@ -2,6 +2,8 @@ from simpy.core import BoundClass
 from simpy.resources.store import Store, StoreGet, StorePut
 
 from utils.technical import charge_time
+import functools 
+
 
 
 class ChargerPut(StorePut):
@@ -79,6 +81,10 @@ class Charger (Store):
         The duration of this process depends on the battery level and the
         power erogated by the charger.
 
+        In the end, if a ChargerGet event is already waiting for the 
+        charged battery, the ChargerGet event is triggered so that 
+        the pending process can go on.
+
         :param event: The ChargerPut event used to store the battery.
         """
         battery = event.item 
@@ -114,9 +120,16 @@ class Charger (Store):
         :param event: The ChargerGet event.
 
         """
+        if event.waitcharge:
+            battery = next((item for item in self.items if item.charged), None)
+            if battery is not None:
+                self.items.remove(item)
+                event.succeed(battery)
+        else:
+            #min(self.items, key=functools.partial(charge_time, power=self.power))
         #for item in self.items:
         #    if item.charged:
         #        self.items.remove(item)
         #        event.succeed(item)
         #        break
-        #return True
+        return True
