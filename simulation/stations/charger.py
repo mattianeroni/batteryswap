@@ -1,7 +1,8 @@
 from simpy.core import BoundClass 
 from simpy.resources.store import Store, StoreGet, StorePut
 
-from utils.technical import charge_time
+from utils.technical import charge_time, level_at_time, missing_time_to_charge
+
 import functools 
 
 
@@ -89,6 +90,7 @@ class Charger (Store):
         """
         battery = event.item 
         yield self.env.timeout( charge_time(battery, self.power) )
+        battery.level = battery.capacity
         battery.charged = True
         if event in self.get_queue:
             event.succeed(battery)
@@ -106,6 +108,7 @@ class Charger (Store):
         """
         if self.level < self._capacity:
             self.items.append(event.item)
+            event.item.start_charging = self.env.now
             event.succeed()
             self.env.process(self.__charge_process(event))
 
@@ -126,10 +129,11 @@ class Charger (Store):
                 self.items.remove(item)
                 event.succeed(battery)
         else:
-            #min(self.items, key=functools.partial(charge_time, power=self.power))
-        #for item in self.items:
-        #    if item.charged:
-        #        self.items.remove(item)
-        #        event.succeed(item)
-        #        break
+            _now = self.env.now
+            battery = min( self.items, key=functools.partial(missing_time_to_charge, ctime=_now, power=self.power) , default=None )
+            assert battery is not None 
+            self.items.remove(battery)
+            battery.level = level_at_time(_now, battery, self.power)
+            event.succeed(battery)
+        
         return True

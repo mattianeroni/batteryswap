@@ -29,12 +29,14 @@ class Battery:
         """
         
         :param btype: The type of battery.
-        
         :param level: The current level of charge in kWh.
+
+        :attr start_charging: The simulation time when the battery started charging.
         
         """
         self.btype = btype 
         self.level = level 
+        self.start_charging = 0 
 
     @property 
     def capacity (self):
