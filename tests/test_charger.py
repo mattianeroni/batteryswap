@@ -54,16 +54,13 @@ def test1(env, charger, batteries):
 
 
 def test2(env, charger, batteries):
-    env.process(getter(env, charger, waitcharge=False))
-    env.process(getter(env, charger, waitcharge=False))
-    env.process(getter(env, charger, waitcharge=False))
-    env.process(getter(env, charger, waitcharge=False))
+    env.process(getter(env, charger, waitcharge=True))
+    
 
     yield env.timeout(20)
 
-    for b in batteries:
-        env.process(putter(env, charger, b))
-        #syield env.timeout(1)
+    yield env.process(putter(env, charger, batteries[0]))
+    #syield env.timeout(1)
 
      
 
