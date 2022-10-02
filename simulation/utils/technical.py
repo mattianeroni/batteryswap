@@ -1,7 +1,3 @@
-import math 
-
-
-
 
 def seconds_to_hours (seconds):
     """ Convert a time in seconds to a time in hours """

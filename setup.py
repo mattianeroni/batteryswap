@@ -7,11 +7,11 @@ setup(
     author='Mattia Neroni, Ph.D, Eng.',
     author_email='mattianeroni@yahoo.it',
     url='https://github.com/mattianeroni/server-side-algorithms',
-    package_dir = {
-        'simulation': 'simulation'
-    },
     packages=[
-        'simulation'
+        "simulation"
+    ],
+    package_dir=[
+        "simulation": "simulation"
     ],
     python_requires='>=3.9',
     classifiers=[
