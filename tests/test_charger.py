@@ -54,13 +54,17 @@ def test1(env, charger, batteries):
 
 
 def test2(env, charger, batteries):
-    env.process(getter(env, charger, waitcharge=True))
+    env.process(getter(env, charger, waitcharge=False))
     
 
     yield env.timeout(20)
-
     yield env.process(putter(env, charger, batteries[0]))
-    #syield env.timeout(1)
+
+    yield env.timeout(20)
+    yield env.process(putter(env, charger, batteries[1]))
+
+    yield env.timeout(20)
+    yield env.process(putter(env, charger, batteries[2]))
 
      
 
