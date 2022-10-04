@@ -2,7 +2,7 @@ import dataclasses
 import functools 
 import random 
 
-from typing import Tuple, Union, Callable 
+from typing import Tuple, Union, Callable, Optional
 
 from utils.selection import biased_randomised_selection 
 
@@ -36,9 +36,9 @@ class Config:
         11, 20, 50
     )                                                   # The power in kW erogated by stations (which defines how fast they charge batteries)
     STATION_SELECTION : Callable = random.choice        # Function used to select the size of the charging stations
-    CHARGER_SELECTION : Callable = None                 # Function used to select the size of the charger in a station 
+    CHARGER_SELECTION : Optional[Callable] = None       # Function used to select the size of the charger in a station 
                                                         # (if None, the respective of the STATION_SELECTION is used)
-    POWER_SELECTION : Callable = None                   # Function used to select the power erogated by a station
+    POWER_SELECTION : Optional[Callable] = None         # Function used to select the power erogated by a station
                                                         # (if None, the respective of the STATION_SELECTION is used)
 
 

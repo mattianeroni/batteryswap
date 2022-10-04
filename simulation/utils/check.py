@@ -3,7 +3,7 @@ def check_configuration (config, verbose=False):
 
     # Check batteries types number, capacity and consumption rate
     if verbose:
-        print("[ ] Checking batteries parameters...")
+        print("[ ] Checking batteries parameters...", end="")
 
     if hasattr(config.BATTERIES_CAPACITY, "__len__") and hasattr(config.BATTERIES_CONSUMPTION_RATE, "__len__"):
             
@@ -37,11 +37,62 @@ def check_configuration (config, verbose=False):
 
     # Adjust parameters
     config.N_BATTERIES = _n 
-    config.BATTERIES_CAPACITY = _capacities
-    config.BATTERIES_CONSUMPTION_RATE = _consumption_rates
+    config.BATTERIES_CAPACITY = tuple(_capacities)
+    config.BATTERIES_CONSUMPTION_RATE = tuple(_consumption_rates)
 
     if verbose:
         print("done")
+
+
+
+    
+
+    # Check stations parameters 
+    if verbose:
+        print("[ ] Checking stations parameters...", end="")
+
+    if not hasattr(config.STATIONS_CAPACITY, "__len__"):
+        config.STATIONS_CAPACITY = [config.STATIONS_CAPACITY]
+    
+    if type(config.CHARGERS[0]) == int:
+        config.CHARGERS = [config.CHARGERS]
+
+    if not hasattr(config.STATIONS_POWER, "__len__"):
+        config.STATIONS_POWER = [config.STATIONS_POWER]
+
+
+    max_len = max( i for i in (len(config.STATIONS_CAPACITY), len(config.CHARGERS), len(config.STATIONS_POWER)) if i > 1)
+
+    if len(config.STATIONS_CAPACITY) == 1:
+        config.STATIONS_CAPACITY = config.STATIONS_CAPACITY * max_len
+
+    if len(config.CHARGERS) == 1:
+        config.CHARGERS = config.CHARGERS * max_len
+
+    if len(config.STATIONS_POWER) == 1:
+        config.STATIONS_POWER = config.STATIONS_POWER * max_len
+
+
+    
+
+    if config.CHARGER_SELECTION is None and len(config.CHARGERS) != len(config.STATIONS_CAPACITY):
+        raise Exception("Define a CHARGER_SELECTION if the number of CHARGERS is different by the number of STATIONS_CAPACITY.")
+    
+    if config.POWER_SELECTION is None and len(config.STATIONS_POWER) != len(config.STATIONS_CAPACITY):
+        raise Exception("Define a POWER_SELECTION if the number of STATIONS_POWER is different by the number of STATIONS_CAPACITY.")
+    
+
+    for caps in config.CHARGERS:
+        if len(caps) != config.N_BATTERIES:
+            raise Exception("Each element of CHARGERS must provide a capacity for each battery type.")
+    
+
+    if verbose:
+        print("done")
+
+
+    return True
+
 
 
     
