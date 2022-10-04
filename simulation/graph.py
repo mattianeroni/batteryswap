@@ -2,6 +2,9 @@ import networkx as nx
 import osmnx as ox 
 import random 
 
+from simulation.stations import Station
+
+
 
 class Graph(nx.MultiDiGraph):
 
@@ -12,13 +15,15 @@ class Graph(nx.MultiDiGraph):
     
 
     @classmethod 
-    def from_nx_graph(cls, nxG, charging_stations, swap_time):
+    def from_nx_graph(cls, nxG, env, btypes, config):
         """
         Method to generate the Graph object needed by the simulation.
 
         :param nxG: A networkx.MultiDiGraph.
-        :param charging_stations: The percentage of nodes that are charging stations.
-        :param swap_time: Operator time needed to change batteries.
+        :param env: The simulation environment.
+        :param btype: The battteries types managed.
+        :param config: The simulation's configuration.
+
         :return: A Graph instance.
         """
         G = cls.__new__(cls)
@@ -28,7 +33,7 @@ class Graph(nx.MultiDiGraph):
         for _, node in G.nodes.items():
             
             # Node is not a charging station
-            if random.random() > charging_stations:
+            if random.random() > config.PERCENTAGE_STATIONS:
                 node["is_station"] = False
                 node["startp"] = random.random()
                 node["endp"] = random.random()
@@ -38,21 +43,33 @@ class Graph(nx.MultiDiGraph):
             node["is_station"] = True
             node["startp"] = 0.0
             node["endp"] = 0.0
-            node["swap_time"] = swap_time 
+
+            station_cap = config.STATION_SELECTION(config.STATIONS_CAPACITY)
+            chargers_caps = config.CHARGERS[list(config.STATIONS_CAPACITY).index(station_cap)] if config.CHARGER_SELECTION is None else config.CHARGER_SELECTION(config.CHARGERS) 
+            station_power = config.STATIONS_POWER[list(config.STATIONS_CAPACITY).index(station_cap)] if config.POWER_SELECTION is None else config.POWER_SELECTION(config.STATIONS_POWER)
+            
+            node["station"] =  Station(
+                env, 
+                capacity=station_cap, 
+                n_btypes=[ (type_, number) for type_, number in zip(btypes, chargers_caps) ],
+                swaptime=config.SWAP_TIME,
+                power=station_power,
+            )
 
 
-
+        # Edges energy consumption
+        # ...
 
         return G
 
 
     @classmethod
-    def from_file(cls, filename, charging_stations, swap_time):
+    def from_file(cls, filename, env, btypes, config):
         """
         Same as from_nx_graph but it reads the MultiDiGraph from a 
         GraphML file.
         """
         nxG = ox.load_graphml(filename)
-        return cls.from_nx_graph(nxG, charging_stations, swap_time)
+        return cls.from_nx_graph(nxG, env, config)
 
     

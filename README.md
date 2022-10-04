@@ -17,7 +17,7 @@ This repository consists of a discrete event simulation showing that electric ve
 
 ## Overview
 
-In my view, it's not possible to talk about electric vehicles without ***batteries sharing*** (or ***batteries swapping***). Waiting for almost an hour for the vehicle to charge is not handy, realistic, and not compliant with modern car sharing or ride sharing methods. 
+It's not possible to talk about electric vehicles without ***batteries sharing*** (or ***batteries swapping***). Waiting for almost an hour for the vehicle to charge is not handy, realistic, and not compliant with modern car sharing or ride sharing methods. 
 A situation where electric vehicles drivers, once arrived to a charging station, remove exhausted batteries and replace them with the charged batteries previously left by somebody else is ***much more convenient***, and it gives rise to a ***much more appreciated scenario***.
 
 
