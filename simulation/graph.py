@@ -70,6 +70,6 @@ class Graph(nx.MultiDiGraph):
         GraphML file.
         """
         nxG = ox.load_graphml(filename)
-        return cls.from_nx_graph(nxG, env, config)
+        return cls.from_nx_graph(nxG, env, btypes, config)
 
     
