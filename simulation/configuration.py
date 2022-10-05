@@ -13,18 +13,21 @@ class Config:
     """ This class define the parameters of a simulation """
     
 
-    # General
+    # GENERAL
+    # ------------------------------------------------------------------------------------------------------
     SIM_TIME : int = 140_000                            # Simulation time 
     GRAPH_FILE : str = "./graphs/Test.graphml"          # Previously extracted graph to use 
+    # ------------------------------------------------------------------------------------------------------
 
 
-
-    # Vehicles
+    # VEHICLES
+    # ------------------------------------------------------------------------------------------------------
     N_VEHICLES : int = 40                               # Number of travelling vehicles 
+    # ------------------------------------------------------------------------------------------------------
     
     
-    
-    # Stations
+    # STATIONS
+    # ------------------------------------------------------------------------------------------------------
     PERCENTAGE_STATIONS : float = 0.2                   # Percentage of nodes with a charging station
     STATIONS_CAPACITY : Tuple[int, ...] = (
         2, 4, 6,
@@ -40,9 +43,11 @@ class Config:
                                                         # (if None, the respective of the STATION_SELECTION is used)
     POWER_SELECTION : Optional[Callable] = None         # Function used to select the power erogated by a station
                                                         # (if None, the respective of the STATION_SELECTION is used)
+    # ------------------------------------------------------------------------------------------------------
 
 
-    # Batteries
+    # BATTERIES
+    # ------------------------------------------------------------------------------------------------------
     N_BATTERIES : int = 3                               # The number of managed batteries types
     BATTERIES_CAPACITY : Union[Tuple[int, ...], int] = (
         10, 20, 30
@@ -52,10 +57,12 @@ class Config:
     )                                                   # The consumption rates of batteries types
     BATTERY_SELECTOR : Callable = functools.partial(biased_randomised_selection, beta=0.4)
                                                         # The function used to select a battery type instead of the other
+    # ------------------------------------------------------------------------------------------------------
 
 
-    # Times
+    # TIMES 
+    # ------------------------------------------------------------------------------------------------------
     SWAP_TIME : int = 30                                # The time (in seconds) required to swap batteries
-
+    # ------------------------------------------------------------------------------------------------------
 
 

@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='batteryswap',
@@ -10,9 +10,9 @@ setup(
     packages=[
         "simulation"
     ],
-    package_dir=[
-        "simulation": "simulation"
-    ],
+    #package_dir = [
+    #    "simulation" : "simulation",
+    #],
     python_requires='>=3.9',
     classifiers=[
         "Development Status :: 3 - Alpha"
