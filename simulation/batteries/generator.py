@@ -25,13 +25,12 @@ class BatteriesGenerator:
 
     """ An instance of this class represents a generator of batteries """
 
-    def __init__(self, func, config):
+    def __init__(self, config):
         """
-        :param func: The function used to select a battery type.
         :param config: The simulation configuration.
         """
         self.btypes = tuple(BatteryType(i, config.BATTERIES_CAPACITY[i], config.BATTERIES_CONSUMPTION_RATE[i]) for i in range(config.N_BATTERIES))
-        self.__func = func
+        self.__func = config.BATTERY_SELECTOR
 
 
     def choose_one(self):

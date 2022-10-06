@@ -96,7 +96,3 @@ def check_configuration (config, verbose=False):
 
     # Return True if the controls are correctly concluded.
     return True
-
-
-
-    

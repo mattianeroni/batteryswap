@@ -3,10 +3,15 @@ import osmnx as ox
 import random 
 
 from simulation.stations import Station
-
+from utils.open_elevation import get_elevation
 
 
 class Graph(nx.MultiDiGraph):
+
+    """ 
+    An instance of this class represents the Graph needed by the simulation 
+    as an extension of a networkx.MultiDiGraph.
+    """
 
 
     def __new__(cls, *args, **kwargs):
@@ -31,6 +36,9 @@ class Graph(nx.MultiDiGraph):
 
         # Initialise charging stations
         for _, node in G.nodes.items():
+
+            # Set node elevation 
+            node["elevation"] = get_elevation(node['y'], node['x'])
             
             # Node is not a charging station
             if random.random() > config.PERCENTAGE_STATIONS:
@@ -57,8 +65,10 @@ class Graph(nx.MultiDiGraph):
             )
 
 
+        # Compute edges slope (i.e., grade) 
+        ox.elevation.add_edge_grades(G, add_absolute=True, precision=3)
+        
         # Edges energy consumption
-        # ...
 
         return G
 
