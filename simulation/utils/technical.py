@@ -1,3 +1,6 @@
+import math 
+
+
 
 def seconds_to_hours (seconds):
     """ Convert a time in seconds to a time in hours """
@@ -8,6 +11,17 @@ def seconds_to_hours (seconds):
 def hours_to_seconds (hours):
     """ Convert a time in hours to a time in seconds """
     return hours * 3600
+
+
+def slope_to_grades (slope):
+    """ Convert a slope (i.e., rise over run) to grades """
+    return math.degrees(math.atan(slope))
+
+
+
+def slope_to_rads (slope):
+    """ Convert a slope (i.e., rise over run) to radiants """
+    return math.atan(slope)
 
 
 
