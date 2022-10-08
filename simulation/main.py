@@ -20,9 +20,9 @@ if __name__ == "__main__":
 
     assert check_configuration(config)
 
-    bgen = batteries.BatteriesGenerator(config)
+    #bgen = batteries.BatteriesGenerator(config)
 
 
-    G = graph.Graph.from_file("./graphs/Test.graphml", env, bgen.btypes, config)
+    #G = graph.Graph.from_file("./graphs/Test.graphml", env, bgen.btypes, config)
 
     

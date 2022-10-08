@@ -1,2 +1,0 @@
-class VehicleType:
-    pass 

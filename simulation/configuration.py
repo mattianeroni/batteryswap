@@ -25,33 +25,6 @@ class Config:
     # --------------------------------------------------------------------------------------------------------
 
 
-
-    # VEHICLES
-    # --------------------------------------------------------------------------------------------------------
-
-    VEHICLES_SPEED : int = 20                           # The vehicles speed in [m/s]
-
-    # The possible vehicle types considered
-    # :param _id: A unique id to identify the vehicle type 
-    # :param n_batteries: The size of the vehicle expressed in number of batteries used
-    # :param consumption_rate: The impact on consumptions related to the vehicle type
-    VEHICLE_TYPES : Tuple[VehicleType,...] = (
-        VehicleType(
-            _id = 0,
-            n_batteries = 4,
-            consumption_rate = 1.0,
-        ),        
-
-    )                                                   
-
-    VEHICLE_SELECTOR : Callable = functools.partial(biased_randomised_selection, beta=0.4)
-                                                        # The function used to select a vehicle type
-
-    # --------------------------------------------------------------------------------------------------------
-
-
-
-
     # SLOPE
     # --------------------------------------------------------------------------------------------------------
     POSITIVE_SLOPE_CONSUMPTION_RATE : float = 0.1       # The impact of positive slope on consumptions [1/°grade]
@@ -122,6 +95,31 @@ class Config:
 
     BATTERY_SELECTOR : Callable = functools.partial(biased_randomised_selection, beta=0.4)
                                                         # The function used to select a battery type instead of the other
+    # --------------------------------------------------------------------------------------------------------
+
+
+    # VEHICLES
+    # --------------------------------------------------------------------------------------------------------
+
+    VEHICLES_SPEED : int = 20                           # The vehicles speed in [m/s]
+
+    # The possible vehicle types considered
+    # :param _id: A unique id to identify the vehicle type 
+    # :param n_batteries: The size of the vehicle expressed in number of batteries used
+    # :param consumption_rate: The impact on consumptions related to the vehicle type
+    VEHICLE_TYPES : Tuple[VehicleType,...] = (
+        VehicleType(
+            _id = 0,
+            btype = BATTERY_TYPES[0],
+            n_batteries = 4,
+            consumption_rate = 1.0,
+        ),        
+
+    )                                                   
+
+    VEHICLE_SELECTOR : Callable = functools.partial(biased_randomised_selection, beta=0.4)
+                                                        # The function used to select a vehicle type
+
     # --------------------------------------------------------------------------------------------------------
 
 

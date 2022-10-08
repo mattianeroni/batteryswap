@@ -1,1 +1,1 @@
-from .generator import VehicleType
+from .vehicle import VehicleType, Vehicle

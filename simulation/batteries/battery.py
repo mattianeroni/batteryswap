@@ -1,3 +1,26 @@
+class BatteryType:
+
+    """ An instance of this class represents a battery type """
+
+    def __init__(self, _id, capacity, consumption_rate):
+        """
+        :param _id: A unique id to identify the battery type.
+        :param capacity: The maximum charge in kWh.
+        
+        :param consumption_rate: A value in (0, 1) representing how fast the battery is consumed.
+                                 According to literature, this value is indicatively around 0.24 kWh/mile 
+                                 or 0.15 kWh/km.
+
+        """
+        self.__id = _id 
+        self.capacity = capacity 
+        self.consumption_rate = consumption_rate
+    
+    def __repr__(self):
+        return f"Battery_{self.__id}"
+
+
+
 class Battery:
     
     """ An instance of this class represents a single battery """

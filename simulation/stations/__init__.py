@@ -1,2 +1,1 @@
-from .stations import Station
-from .generator import StationsGenerator, StationType
+from .stations import Station, StationType

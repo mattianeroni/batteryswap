@@ -1,2 +1,1 @@
-from .generator import BatteriesGenerator, BatteryType
-from .battery import Battery
+from .battery import Battery, BatteryType
