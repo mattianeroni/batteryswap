@@ -1,6 +1,11 @@
 import simpy 
+from simpy.core import BoundClass
+from simpy.resources.resource import Request, Release
 
 from .charger import Charger
+
+
+import collections 
 
 
 
@@ -23,6 +28,19 @@ class StationType:
         return f"Station_{self.__id}"
 
 
+
+
+class StationRequest(Request):
+
+    """ Request of a vehicle that needs to enter the charging station """
+
+    def __init__(self, resource):
+        super().__init__(resource)
+        self.enter_time = resource._env.now
+
+    def __enter__(self):
+        self.resource
+        return self 
 
 
 
@@ -49,3 +67,6 @@ class Station (simpy.Resource):
                 btype: Charger(env, capacity=n, power=stype.power)
             for btype, n in zip(btypes, stype.chargers_capacities)
         }
+
+        self.log_queue = {}
+        self.log_times = collections.deque()
