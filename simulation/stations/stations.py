@@ -30,20 +30,6 @@ class StationType:
 
 
 
-class StationRequest(Request):
-
-    """ Request of a vehicle that needs to enter the charging station """
-
-    def __init__(self, resource):
-        super().__init__(resource)
-        self.enter_time = resource._env.now
-
-    def __enter__(self):
-        self.resource
-        return self 
-
-
-
 class Station (simpy.Resource):
 
     """ An instance of this class represents a charging station """
