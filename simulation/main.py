@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     config = configuration.Config() 
 
-    check_configuration(config, verbose=True)
+    assert check_configuration(config)
 
     bgen = batteries.BatteriesGenerator(config)
 

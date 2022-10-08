@@ -11,6 +11,7 @@ This repository consists of a discrete event simulation showing that electric ve
 - [Simulation](#simulation)
 - [Results](#results)
 - [Author](#author)
+- [Help Us](#help-us)
 - [Publication](#publication)
 
 
@@ -64,6 +65,12 @@ Website: https://mattianeroni.github.io
 
 Linkedin: https://www.linkedin.com/in/mattia-neroni-081965101/
 
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Help Us
+
+We are looking for collaborators with experience on electrical vehicles who help us improving the accuracy of consumption calculation and related technical details.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

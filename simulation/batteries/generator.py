@@ -17,7 +17,7 @@ class BatteryType:
         self.consumption_rate = consumption_rate
     
     def __repr__(self):
-        return f"{self.__id}"
+        return f"Battery_{self.__id}"
 
 
 
@@ -29,7 +29,7 @@ class BatteriesGenerator:
         """
         :param config: The simulation configuration.
         """
-        self.btypes = tuple(BatteryType(i, config.BATTERIES_CAPACITY[i], config.BATTERIES_CONSUMPTION_RATE[i]) for i in range(config.N_BATTERIES))
+        self.btypes = tuple(config.BATTERY_TYPES)
         self.__func = config.BATTERY_SELECTOR
 
 

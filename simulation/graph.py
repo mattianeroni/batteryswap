@@ -20,13 +20,12 @@ class Graph(nx.MultiDiGraph):
     
 
     @classmethod 
-    def from_nx_graph(cls, nxG, env, btypes, config):
+    def from_nx_graph(cls, nxG, env, config):
         """
         Method to generate the Graph object needed by the simulation.
 
         :param nxG: A networkx.MultiDiGraph.
         :param env: The simulation environment.
-        :param btype: The battteries types managed.
         :param config: The simulation's configuration.
 
         :return: A Graph instance.
@@ -52,34 +51,31 @@ class Graph(nx.MultiDiGraph):
             node["startp"] = 0.0
             node["endp"] = 0.0
 
-            station_cap = config.STATION_SELECTION(config.STATIONS_CAPACITY)
-            chargers_caps = config.CHARGERS[list(config.STATIONS_CAPACITY).index(station_cap)] if config.CHARGER_SELECTION is None else config.CHARGER_SELECTION(config.CHARGERS) 
-            station_power = config.STATIONS_POWER[list(config.STATIONS_CAPACITY).index(station_cap)] if config.POWER_SELECTION is None else config.POWER_SELECTION(config.STATIONS_POWER)
-            
+            station_type = config.STATION_SELECTOR(config.STATION_TYPES) 
+
             node["station"] =  Station(
                 env, 
-                capacity=station_cap, 
-                n_btypes=[ (type_, number) for type_, number in zip(btypes, chargers_caps) ],
+                capacity=station_type.capacity, 
+                btypes=config.BATTERY_TYPES,
+                chargers_capacities=station_type.chargers_capacities,
                 swaptime=config.SWAP_TIME,
-                power=station_power,
+                power=station_type.power,
             )
 
 
         # Compute edges slope (i.e., grade) 
         ox.elevation.add_edge_grades(G, add_absolute=True, precision=3)
-        
-        # Edges energy consumption
 
         return G
 
 
     @classmethod
-    def from_file(cls, filename, env, btypes, config):
+    def from_file(cls, filename, env, config):
         """
         Same as from_nx_graph but it reads the MultiDiGraph from a 
         GraphML file.
         """
         nxG = ox.load_graphml(filename)
-        return cls.from_nx_graph(nxG, env, btypes, config)
+        return cls.from_nx_graph(nxG, env, config)
 
     
