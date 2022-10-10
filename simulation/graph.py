@@ -44,7 +44,7 @@ class Graph(nx.MultiDiGraph):
             if elevation:
                 node["elevation"] = get_elevation(node['y'], node['x'], elevation_provider, timeout)
             else:
-                node["elevation"] = 0.0
+                node["elevation"] = 0.0 if not node.get("elevation") else node["elevation"]
 
             # Node is not a charging station
             if random.random() > config.PERCENTAGE_STATIONS:
@@ -58,15 +58,12 @@ class Graph(nx.MultiDiGraph):
             node["startp"] = 0.0
             node["endp"] = 0.0
 
-            station_type = config.STATION_SELECTOR(config.STATION_TYPES) 
 
             node["station"] =  Station(
                 env, 
-                capacity=station_type.capacity, 
+                stype=config.STATION_SELECTOR(config.STATION_TYPES),
                 btypes=config.BATTERY_TYPES,
-                chargers_capacities=station_type.chargers_capacities,
                 swaptime=config.SWAP_TIME,
-                power=station_type.power,
             )
 
 
