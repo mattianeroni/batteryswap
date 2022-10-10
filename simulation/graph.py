@@ -20,13 +20,17 @@ class Graph(nx.MultiDiGraph):
     
 
     @classmethod 
-    def from_nx_graph(cls, nxG, env, config):
+    def from_nx_graph(cls, nxG, env, config, elevation=True, elevation_provider="open_elevation", timeout=20):
         """
         Method to generate the Graph object needed by the simulation.
 
         :param nxG: A networkx.MultiDiGraph.
         :param env: The simulation environment.
         :param config: The simulation's configuration.
+
+        :param elevation: If true the streets slope is considered.
+        :param elevation_provider: The website trusted to get the nodes elevation data. 
+        :param timeout: The maximum time allowed for a GET request to receive node elevation data.
 
         :return: A Graph instance.
         """
@@ -37,8 +41,11 @@ class Graph(nx.MultiDiGraph):
         for _, node in G.nodes.items():
 
             # Set node elevation 
-            node["elevation"] = get_elevation(node['y'], node['x'])
-            
+            if elevation:
+                node["elevation"] = get_elevation(node['y'], node['x'], elevation_provider, timeout)
+            else:
+                node["elevation"] = 0.0
+
             # Node is not a charging station
             if random.random() > config.PERCENTAGE_STATIONS:
                 node["is_station"] = False
@@ -70,12 +77,12 @@ class Graph(nx.MultiDiGraph):
 
 
     @classmethod
-    def from_file(cls, filename, env, config):
+    def from_file(cls, filename, env, config, elevation=True, elevation_provider="open_elevation", timeout=20):
         """
         Same as from_nx_graph but it reads the MultiDiGraph from a 
         GraphML file.
         """
         nxG = ox.load_graphml(filename)
-        return cls.from_nx_graph(nxG, env, config)
+        return cls.from_nx_graph(nxG, env, config, elevation, elevation_provider, timeout)
 
     
