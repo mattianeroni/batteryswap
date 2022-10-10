@@ -24,6 +24,16 @@ def slope_to_rads (slope):
     return math.atan(slope)
 
 
+def km_to_m (length):
+    """ Convert kilometers to meters """
+    return length * 1000
+
+
+def m_to_km (length):
+    """ Convert meters to kilometers """
+    return length / 1000
+
+
 
 def charge_time(battery, power):
     """ 
@@ -74,3 +84,16 @@ def missing_time_to_charge (ctime, battery, power):
     required_t = charge_time(battery, power)
     
     return max(0, required_t - passed_t) 
+
+
+def consumption (edge, vehicle):
+    """ 
+    Method to calculate the energy consumed by a vehicle to run 
+    a given edge according to vehicle consumption, and edge slope. 
+    
+    :param edge: The edge. 
+    :param vehicle: The vehicle.
+    :return: The consumption in kWh.
+    """
+    slope_factor = vehicle.positive_slope_rate if edge["grade"] >= 0 else vehicle.negative_slope_rate
+    return vehicle.consumption * (1 + slope_factor * slope_to_grades(edge["grade_abs"])) / 1000 * edge["length"]

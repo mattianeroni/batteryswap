@@ -68,7 +68,7 @@ class Graph(nx.MultiDiGraph):
 
 
         # Compute edges slope (i.e., grade) 
-        ox.elevation.add_edge_grades(G, add_absolute=False, precision=3)
+        ox.elevation.add_edge_grades(G, add_absolute=True, precision=3)
 
         return G
 

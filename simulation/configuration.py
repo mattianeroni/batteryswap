@@ -19,7 +19,7 @@ class Config:
 
     # GENERAL
     # --------------------------------------------------------------------------------------------------------
-    SIM_TIME : int = 140_000                            # Simulation time 
+    SIM_TIME : int = 140_000                            # Simulation time [seconds]
     GRAPH_FILE : str = "./graphs/Test.graphml"          # Previously extracted graph to use 
     N_VEHICLES : int = 40                               # Number of travelling vehicles during the simulation
     # --------------------------------------------------------------------------------------------------------
@@ -27,14 +27,14 @@ class Config:
 
     # SLOPE
     # --------------------------------------------------------------------------------------------------------
-    POSITIVE_SLOPE_CONSUMPTION_RATE : float = 0.1       # The impact of positive slope on consumptions [1/°grade]
-    NEGATIVE_SLOPE_CONSUMPTION_RATE : float = - 0.05    # The impast of negative slope on consumptions [1/°grade]
+    POSITIVE_SLOPE_CONSUMPTION_RATE : float = 0.1       # The additional impact of positive slope on consumptions [% / °grade]
+    NEGATIVE_SLOPE_CONSUMPTION_RATE : float = - 0.05    # The additional impast of negative slope on consumptions [% / °grade]
     # --------------------------------------------------------------------------------------------------------
     
     
     # STATIONS
     # --------------------------------------------------------------------------------------------------------
-    PERCENTAGE_STATIONS : float = 0.2                   # Percentage of nodes with a charging station
+    PERCENTAGE_STATIONS : float = 0.2                   # Percentage of nodes with a charging station [%]
 
 
     # The station type used in the simulation 
@@ -74,23 +74,11 @@ class Config:
     #  The battery types considered in the simulation 
     # :param _id: A unique id to identify the battery type
     # :param capacity: The capacity of batteries types in kWh (an indicator of size of batteries)
-    # :param consumption_rate: The impact on consumption of each batteries types
+    # :param consumption_rate: The additional impact on consumption of each batteries types [%]
     BATTERY_TYPES : Tuple[BatteryType, ...] = (
-        BatteryType(
-            _id = 0,
-            capacity = 10, 
-            consumption_rate = 1.0,
-        ),
-        BatteryType(
-            _id = 1,
-            capacity = 20, 
-            consumption_rate = 1.0,
-        ),
-        BatteryType(
-            _id = 2,
-            capacity = 20, 
-            consumption_rate = 1.0,
-        ),
+        BatteryType(_id = 0, capacity = 10),
+        BatteryType(_id = 1, capacity = 20),
+        BatteryType(_id = 2, capacity = 20),
     )
 
     BATTERY_SELECTOR : Callable = functools.partial(biased_randomised_selection, beta=0.4)
@@ -106,13 +94,13 @@ class Config:
     # The possible vehicle types considered
     # :param _id: A unique id to identify the vehicle type 
     # :param n_batteries: The size of the vehicle expressed in number of batteries used
-    # :param consumption_rate: The impact on consumptions related to the vehicle type
+    # :param consumption_rate: The consumption of the vehicle type [kWh / km]
     VEHICLE_TYPES : Tuple[VehicleType,...] = (
         VehicleType(
             _id = 0,
             btype = BATTERY_TYPES[0],
             n_batteries = 4,
-            consumption_rate = 1.0,
+            consumption = 0.2,
         ),        
 
     )                                                   
