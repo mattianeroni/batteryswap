@@ -1,9 +1,19 @@
 import networkx as nx 
 import osmnx as ox 
 import random 
+import json 
 
 from simulation.stations import Station
 from utils.open_elevation import get_elevation
+
+
+
+
+
+def _str_to_bool(string):
+    return False if string == "False" else True
+
+
 
 
 class Graph(nx.MultiDiGraph):
@@ -17,6 +27,7 @@ class Graph(nx.MultiDiGraph):
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
         return self
+        
     
 
     @classmethod 
@@ -36,9 +47,24 @@ class Graph(nx.MultiDiGraph):
         """
         G = cls.__new__(cls)
         G.__dict__.update(nxG.__dict__)
+        
+        # Imported from a previous exportation of a Graph 
+        if G.graph.get("has_stations") == True:
+            for _, node in G.nodes.items():
+                if node["is_station"]:
+                    node["station"] = Station(
+                        env, 
+                        stype=config.STATION_TYPES[node["id_station"]],
+                        btypes=config.BATTERY_TYPES,
+                        swaptime=config.SWAP_TIME
+                    )
 
+            return G
+
+        # Imported from a previous exportation of a normal networkx.MultiDiGraph
+        G.graph["has_stations"] = True 
         # Initialise charging stations
-        for _, node in G.nodes.items():
+        for node in G.nodes.values():
 
             # Set node elevation 
             if elevation:
@@ -52,20 +78,21 @@ class Graph(nx.MultiDiGraph):
                 node["startp"] = random.random()
                 node["endp"] = random.random()
                 continue 
-            
+                
+                
             # Node is a charging station
-            node["is_station"] = True
             node["startp"] = 0.0
             node["endp"] = 0.0
+            node["is_station"] = True
 
-
+            station_type = config.STATION_SELECTOR(config.STATION_TYPES)
+            node["id_station"] = station_type._StationType__id
             node["station"] =  Station(
                 env, 
-                stype=config.STATION_SELECTOR(config.STATION_TYPES),
+                stype=station_type,
                 btypes=config.BATTERY_TYPES,
                 swaptime=config.SWAP_TIME,
             )
-
 
         # Compute edges slope (i.e., grade) 
         ox.elevation.add_edge_grades(G, add_absolute=True, precision=3)
@@ -79,7 +106,31 @@ class Graph(nx.MultiDiGraph):
         Same as from_nx_graph but it reads the MultiDiGraph from a 
         GraphML file.
         """
-        nxG = ox.load_graphml(filename)
+        nxG = ox.load_graphml(filename, 
+            node_dtypes={"id_station": int, "is_station": _str_to_bool, "elevation": float, "startp": float, "endp": float}, 
+            graph_dtypes={"has_stations": _str_to_bool}
+        )
         return cls.from_nx_graph(nxG, env, config, elevation, elevation_provider, timeout)
+
+
+    def plot (self):
+        """ 
+        Method to plot the graph.
+        In blue the normal nodes and in red the stations.       
+        """
+        _node_color = tuple("r" if node["is_station"] else "b" for node in self.nodes.values())
+        ox.plot_graph(self, ax=None, figsize=(8, 8), bgcolor='white', node_color=_node_color, 
+              node_size=15, node_alpha=None, node_edgecolor='none', node_zorder=1, 
+              edge_color='blue', edge_linewidth=1, edge_alpha=None, show=True, close=False, 
+              save=False, filepath=None, dpi=300, bbox=None)
+
+
+    def save (self, filename):
+        """ Method to save the graph instance in a GraphML file """
+        for _, node in self.nodes.items():
+            if node["is_station"]:
+                node.pop("station")
+
+        ox.save_graphml(self, filename)
 
     

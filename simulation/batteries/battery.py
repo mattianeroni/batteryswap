@@ -8,11 +8,11 @@ class BatteryType:
         :param capacity: The maximum charge in kWh.s
 
         """
-        self.__id = _id 
+        self._id = _id 
         self.capacity = capacity 
     
     def __repr__(self):
-        return f"Battery_{self.__id}"
+        return f"BatteryType_{self._id}"
 
 
 

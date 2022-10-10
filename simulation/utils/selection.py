@@ -3,6 +3,7 @@ import random
 
 
 
+
 def biased_randomised_selection(options, beta=0.4):
     """
     The selection is made using a quasi-geometric function:
@@ -16,3 +17,10 @@ def biased_randomised_selection(options, beta=0.4):
     """
     idx = int(math.log(random.random(), 1.0 - beta)) % len(options)
     return options[idx]
+
+
+
+OPTIONS = {
+    "biased_randomised_selection" : biased_randomised_selection,
+    "choice" : random.choice
+}

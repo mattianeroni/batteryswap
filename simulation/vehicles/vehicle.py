@@ -13,14 +13,14 @@ class VehicleType:
         :param n_batteries: The number of batteries needed to move the vehicle.
         :param consumption: The impact on consumptions due to the vehicle type.
         """
-        self.__id = _id 
+        self._id = _id 
         self.btype = btype 
         self.n_batteries = n_batteries
         self.consumption = consumption
         
 
     def __repr__(self):
-        return f"Vehicle_{self.__id}"
+        return f"VehicleType_{self._id}"
 
 
 

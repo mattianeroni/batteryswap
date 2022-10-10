@@ -28,7 +28,7 @@ class Config:
     # SLOPE
     # --------------------------------------------------------------------------------------------------------
     POSITIVE_SLOPE_CONSUMPTION_RATE : float = 0.1       # The additional impact of positive slope on consumptions [% / °grade]
-    NEGATIVE_SLOPE_CONSUMPTION_RATE : float = - 0.05    # The additional impast of negative slope on consumptions [% / °grade]
+    NEGATIVE_SLOPE_CONSUMPTION_RATE : float = - 0.05    # The additional impact of negative slope on consumptions [% / °grade]
     # --------------------------------------------------------------------------------------------------------
     
     
@@ -64,7 +64,8 @@ class Config:
         ),
     )
 
-    STATION_SELECTOR : Callable = random.choice         # Function used to select the size of the charging stations
+    STATION_SELECTOR : Callable = functools.partial(random.choice)
+                                                        # Function used to select the size of the charging stations
     # --------------------------------------------------------------------------------------------------------
 
 

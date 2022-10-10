@@ -19,13 +19,14 @@ class StationType:
         :param chargers_capacities: The number of batteries for each type that can be chargeed together.
         :param power: The erogated electricity expressed in kW.
         """
-        self.__id = _id 
+        self._id = _id 
         self.capacity = capacity 
         self.power = power 
         self.chargers_capacities = chargers_capacities
 
     def __repr__(self):
-        return f"Station_{self.__id}"
+        return f"StationType_{self._id}"
+
 
 
 
