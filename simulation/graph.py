@@ -39,7 +39,7 @@ class Graph(nx.MultiDiGraph):
         :param env: The simulation environment.
         :param config: The simulation's configuration.
 
-        :param elevation: If true the streets slope is considered.
+        :param elevation: If true the streets slope is exctacted from Open Maps (NOTE: May take time!).
         :param elevation_provider: The website trusted to get the nodes elevation data. 
         :param timeout: The maximum time allowed for a GET request to receive node elevation data.
 
@@ -86,7 +86,7 @@ class Graph(nx.MultiDiGraph):
             node["is_station"] = True
 
             station_type = config.STATION_SELECTOR(config.STATION_TYPES)
-            node["id_station"] = station_type._StationType__id
+            node["id_station"] = station_type._id
             node["station"] =  Station(
                 env, 
                 stype=station_type,

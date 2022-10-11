@@ -35,7 +35,7 @@ This future scenario requires a standardization of batteries and their clusteriz
 
 ## Roads Network
 
-The download of roads networks is made by interrogating [Open Street Map](https://www.openstreetmap.org/#map=6/42.088/12.564) through [OSMnx](https://osmnx.readthedocs.io/en/stable/). This process might be time consuming, hence some sample extractions are saved in [graphs](/graphs/) directory as [GraphML](http://graphml.graphdrawing.org/) and can be read by using [NetworkX](https://networkx.org/).
+The download of roads networks is made by interrogating [Open Street Map](https://www.openstreetmap.org/#map=6/42.088/12.564) through [OSMnx](https://osmnx.readthedocs.io/en/stable/). This process might be time consuming, hence some sample extractions are saved in [nxgraphs](/nxgraphs/) directory as [GraphML](http://graphml.graphdrawing.org/) and can be read by using [NetworkX](https://networkx.org/).
 
 <p align="center">
   <img src="/images/graph1.png" width="45%">
