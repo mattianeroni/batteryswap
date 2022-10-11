@@ -31,11 +31,10 @@ class Graph(nx.MultiDiGraph):
     
 
     @classmethod 
-    def from_nx_graph(cls, nxG, env, config, elevation=True, elevation_provider="open_elevation", timeout=20):
+    def from_file (cls, env, config, elevation=True, elevation_provider="open_elevation", timeout=20):
         """
         Method to generate the Graph object needed by the simulation.
 
-        :param nxG: A networkx.MultiDiGraph.
         :param env: The simulation environment.
         :param config: The simulation's configuration.
 
@@ -45,6 +44,11 @@ class Graph(nx.MultiDiGraph):
 
         :return: A Graph instance.
         """
+        nxG = ox.load_graphml(config.GRAPH_FILE, 
+            node_dtypes={"id_station": int, "is_station": _str_to_bool, "elevation": float, "startp": float, "endp": float}, 
+            graph_dtypes={"has_stations": _str_to_bool}
+        )
+
         G = cls.__new__(cls)
         G.__dict__.update(nxG.__dict__)
         
@@ -98,19 +102,6 @@ class Graph(nx.MultiDiGraph):
         ox.elevation.add_edge_grades(G, add_absolute=True, precision=3)
 
         return G
-
-
-    @classmethod
-    def from_file(cls, filename, env, config, elevation=True, elevation_provider="open_elevation", timeout=20):
-        """
-        Same as from_nx_graph but it reads the MultiDiGraph from a 
-        GraphML file.
-        """
-        nxG = ox.load_graphml(filename, 
-            node_dtypes={"id_station": int, "is_station": _str_to_bool, "elevation": float, "startp": float, "endp": float}, 
-            graph_dtypes={"has_stations": _str_to_bool}
-        )
-        return cls.from_nx_graph(nxG, env, config, elevation, elevation_provider, timeout)
 
 
     def plot (self):
