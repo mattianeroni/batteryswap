@@ -22,14 +22,9 @@ class Config:
     SIM_TIME : int = 140_000                            # Simulation time [seconds]
     GRAPH_FILE : str = "./graphs/Test.graphml"          # Previously extracted graph to use 
     N_VEHICLES : int = 40                               # Number of travelling vehicles during the simulation
+    SHARING : bool = True                               # If True batteries are shared otherwise not
     # --------------------------------------------------------------------------------------------------------
 
-
-    # SLOPE
-    # --------------------------------------------------------------------------------------------------------
-    POSITIVE_SLOPE_CONSUMPTION_RATE : float = 0.1       # The additional impact of positive slope on consumptions [% / °grade]
-    NEGATIVE_SLOPE_CONSUMPTION_RATE : float = - 0.05    # The additional impact of negative slope on consumptions [% / °grade]
-    # --------------------------------------------------------------------------------------------------------
     
     
     # STATIONS
@@ -102,6 +97,8 @@ class Config:
             btype = BATTERY_TYPES[0],
             n_batteries = 4,
             consumption = 0.2,
+            positive_slope_rate = 0.1,
+            negative_slope_rate = -0.05
         ),        
 
     )                                                   
