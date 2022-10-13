@@ -19,7 +19,7 @@ class Config:
 
     # GENERAL
     # --------------------------------------------------------------------------------------------------------
-    SIM_TIME : int = 140_000                            # Simulation time [seconds]
+    SIM_TIME : int = 14_000                            # Simulation time [seconds]
     GRAPH_FILE : str = "./graphs/Test.graphml"          # Previously extracted graph to use 
     N_VEHICLES : int = 40                               # Number of travelling vehicles during the simulation
     SHARING : bool = True                               # If True batteries are shared otherwise not
@@ -70,7 +70,6 @@ class Config:
     #  The battery types considered in the simulation 
     # :param _id: A unique id to identify the battery type
     # :param capacity: The capacity of batteries types in kWh (an indicator of size of batteries)
-    # :param consumption_rate: The additional impact on consumption of each batteries types [%]
     BATTERY_TYPES : Tuple[BatteryType, ...] = (
         BatteryType(_id = 0, capacity = 10),
         BatteryType(_id = 1, capacity = 20),
@@ -85,7 +84,7 @@ class Config:
     # VEHICLES
     # --------------------------------------------------------------------------------------------------------
 
-    VEHICLES_SPEED : int = 20                           # The vehicles speed in [m/s]
+    VEHICLES_SPEED : int = 16                           # The vehicles speed in [m/s]
 
     # The possible vehicle types considered
     # :param _id: A unique id to identify the vehicle type 

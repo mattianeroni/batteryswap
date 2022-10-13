@@ -21,6 +21,8 @@ class VehicleType:
         self.btype = btype 
         self.n_batteries = n_batteries
         self.consumption = consumption
+        self.positive_slope_rate = positive_slope_rate 
+        self.negative_slope_rate = negative_slope_rate
         
 
     def __repr__(self):
@@ -52,8 +54,13 @@ class Vehicle:
         self.travel_time = 0
         self.covered = 0
 
+
     @property 
-    def consumption_rate (self):
+    def level (self):
+        return sum(i.level for i in self.batteries)
+
+    @property 
+    def consumption (self):
         return self.vtype.consumption
 
     @property 
@@ -63,4 +70,20 @@ class Vehicle:
     @property 
     def negative_slope_rate (self):
         return self.vtype.negative_slope_rate
+
+
+    def consume (self, energy):
+        """
+        The state of the vehicle batteries is updated according
+        to the quantity of energy consumed.
+
+        NOTE: The energy consumed in equally distributed over all the batteries
+
+        :param energy: The energy consumed in kWh.
+        """
+        uenergy = energy / len(self.batteries)
+        for b in self.batteries:
+            b.level -= uenergy
+
+        
     

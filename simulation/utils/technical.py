@@ -86,6 +86,7 @@ def missing_time_to_charge (ctime, battery, power):
     return max(0, required_t - passed_t) 
 
 
+
 def consumption (edge, vehicle):
     """ 
     Method to calculate the energy consumed by a vehicle to run 
@@ -97,6 +98,49 @@ def consumption (edge, vehicle):
     """
     slope_factor = vehicle.positive_slope_rate if edge["grade"] >= 0 else vehicle.negative_slope_rate
     return vehicle.consumption * (1 + slope_factor * slope_to_grades(edge["grade_abs"])) / 1000 * edge["length"]
+
+
+
+def path_consumption (G, path, vehicle):
+    """
+    Method to calculate the energy consumed by a vehicle
+    covering an entire set of nodes (i.e., path).
+
+    :param G: The graph.
+    :param path: The path to cover.
+    :param vehicle: The vehicle.
+    :return: The consumption in kWh.
+    """
+    if vehicle.position != path[0]:
+        raise Exception("The vehicle is not on the path.")
+    return sum( consumption(G[inode][jnode][0], vehicle) for inode, jnode in zip(path[:-1], path[1:]) )
+
+
+
+def path_travel_time (G, path, vehicle):
+    """ 
+    Method used to calculate the time a vehicle requires 
+    to cover a specified path.
+
+    NOTE: Uniform linear motion is considered.
+    
+    :param G: The graph.
+    :param path: The path to cover.
+    :param vehicle: The vehicle.
+    :return: The travel time in seconds [s].
+
+    """
+    if vehicle.position != path[0]:
+        raise Exception("The vehicle is not on the path.")
+    speed = vehicle.speed
+    return sum(G[inode][jnode][0]["length"] / speed for inode, jnode in zip(path[:-1], path[1:]))
+
+
+
+def path_length (G, path):
+    """ Method to calculate the length of the given path in meters [m] """
+    return sum(G[inode][jnode][0]["length"] for inode, jnode in zip(path[:-1], path[1:]))
+
 
 
 def euclidean_distance (source, target, G):

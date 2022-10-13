@@ -3,15 +3,12 @@ import random
 import gc 
 import functools
 import networkx as nx 
-from networkx.algorithms.shortest_paths import astar
 
+from simulation.utils.technical import path_travel_time, path_consumption, path_length
 from simulation.utils.check import check_configuration
-from simulation.util.technical import euclidean_distance
+from simulation.utils.algorithms import define_path
 from simulation.graph import Graph
 from simulation.vehicles import Vehicle
-
-
-
 
 
 
@@ -37,6 +34,7 @@ class SimulationRunner:
         
         self.G = Graph.from_file(self.env, config, elevation=elevation, elevation_provider=elevation_provider, timeout=timeout)
         
+
         # The number of trips successfully concluded
         self.success_trips = 0 
         self.total_trips = 0
@@ -110,7 +108,7 @@ class SimulationRunner:
         ended_proc = yield env.all_of(vehicles_proc)
         self.success_trips += sum(1 if i.destination == i.position else 0 for i in ended_proc.values())
         self.total_distance += sum(i.covered for i in ended_proc.values())
-        self.success_trips += sum(i.travel_time for i in ended_proc.values())
+        self.total_travel_time += sum(i.travel_time for i in ended_proc.values())
 
 
     def __trip (self, vehicle):
@@ -127,13 +125,41 @@ class SimulationRunner:
             yield env.timeout(0)
             return vehicle 
         
+        #print(f"{int(env.now)} - {vehicle} starts.")
         # Register when the vehicle starts travelling
         _start_travelling = env.now 
 
-        # Get the path to the destination
-        path = astart.astar_path(G, source, target, heuristic=functools.partial(euclidean_distance, G=G), weight="length")
+        # Simulate the travelling station by station (when stations are needed)
+        while vehicle.position != target and vehicle.level > 0:
+            
+            # The path to the target (if possible), or alternatively 
+            # the path to an intermediate charging station. 
+            path = define_path(G, source, target, vehicle)
+
+            # No station or destination can be reached at this point.
+            if not path:
+                #print(f"{int(env.now)} - {vehicle} cannot arrive.")
+                return vehicle
+            
+            # Wait for the vehicle to move
+            yield env.timeout( path_travel_time(G, path, vehicle) )
+            energy_used = path_consumption(G, path, vehicle)
+            vehicle.position = path[-1]
+
+            # Update vehicle's batteries state
+            vehicle.consume(energy_used)
+
+            # Update the distance covered by the vehicle
+            vehicle.covered += path_length(G, path)
+
+            # If reached node is a station charge the vehicle.
+            # Fake charge for the moment...
+            if G.nodes[vehicle.position]["is_station"] and vehicle.position != target: 
+                for i in vehicle.batteries:
+                    i.level = i.capacity
+            
 
         
         vehicle.travel_time = env.now - _start_travelling
-
+        #print(f"{int(env.now)} - {vehicle} arrives.")
         return vehicle
