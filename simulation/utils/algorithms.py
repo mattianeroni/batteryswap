@@ -2,6 +2,7 @@ from networkx.algorithms.shortest_paths import astar
 
 from simulation.utils.technical import consumption
 from simulation.utils.technical import euclidean_distance
+from simulation.exceptions import SimulationNoPath
 
 import functools
 
@@ -25,11 +26,8 @@ def define_path (G, source, target, vehicle, level=None):
             representing the stations where a stop is needed.
     """
     # Define a baseline path with no stops using the A* algorithm
-    try:
-        baseline_path = astar.astar_path(G, source, target, heuristic=functools.partial(euclidean_distance, G=G), weight="length")
-    except:
-        return None
-    
+    baseline_path = astar.astar_path(G, source, target, heuristic=functools.partial(euclidean_distance, G=G), weight="length")
+        
     # Init fuel level and keep track of last station visited
     level = level or vehicle.level
     last_station, last_station_pointer = None, None 
@@ -52,7 +50,7 @@ def define_path (G, source, target, vehicle, level=None):
                 return tuple(baseline_path[:last_station_pointer+1])
             # If we didn't pass through a station, a station search in neighbour nodes
             # is required.
-            return None #neighbour_station()
+            raise SimulationNoPath #neighbour_station()
 
     # The destion can be reached out without any stop.
     return tuple(baseline_path) 

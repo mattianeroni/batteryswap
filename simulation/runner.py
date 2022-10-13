@@ -3,6 +3,7 @@ import random
 import gc 
 import functools
 import networkx as nx 
+from networkx.exception import NetworkXNoPath
 
 from simulation.utils.technical import path_travel_time, path_consumption, path_length
 from simulation.utils.check import check_configuration
@@ -36,7 +37,8 @@ class SimulationRunner:
         
 
         # The number of trips successfully concluded
-        self.success_trips = 0 
+        self.failed_trips = 0
+        self.nx_failed_trips = 0 
         self.total_trips = 0
         self.total_distance = 0
         self.total_travel_time = 0
@@ -85,8 +87,6 @@ class SimulationRunner:
                 vehicles_proc.remove(proc)
                 self.total_distance += vehicle.covered
                 self.total_travel_time += vehicle.travel_time
-                if vehicle.position == vehicle.destination:
-                    self.success_trips += 1
             
             diff = config.N_VEHICLES - len(vehicles_proc)
             self.total_trips += diff 
@@ -106,7 +106,6 @@ class SimulationRunner:
         # Wait for remaining processes at the end of the simulation time 
         # defined by the configuration.
         ended_proc = yield env.all_of(vehicles_proc)
-        self.success_trips += sum(1 if i.destination == i.position else 0 for i in ended_proc.values())
         self.total_distance += sum(i.covered for i in ended_proc.values())
         self.total_travel_time += sum(i.travel_time for i in ended_proc.values())
 
@@ -122,7 +121,6 @@ class SimulationRunner:
 
         # If the vehicle is alreay arrived the process terminates
         if vehicle.position == vehicle.destination:
-            yield env.timeout(0)
             return vehicle 
         
         #print(f"{int(env.now)} - {vehicle} starts.")
@@ -134,17 +132,27 @@ class SimulationRunner:
             
             # The path to the target (if possible), or alternatively 
             # the path to an intermediate charging station. 
-            path = define_path(G, source, target, vehicle)
+            try:
+                path = define_path(G, source, target, vehicle)
+            
+            except NetworkXNoPath:
+                self.nx_failed_trips += 1
+                vehicle.travel_time = env.now - _start_travelling
+                return vehicle 
+            
+            except SimulationNoPath:
+                self.failed_trips += 1 
+                vehicle.travel_time = env.now - _start_travelling
+                return vehicle
 
             # No station or destination can be reached at this point.
             if not path:
-                #print(f"{int(env.now)} - {vehicle} cannot arrive.")
                 return vehicle
             
             # Wait for the vehicle to move
             yield env.timeout( path_travel_time(G, path, vehicle) )
             energy_used = path_consumption(G, path, vehicle)
-            vehicle.position = path[-1]
+            vehicle.position, source = path[-1], path[-1]
 
             # Update vehicle's batteries state
             vehicle.consume(energy_used)
@@ -159,7 +167,6 @@ class SimulationRunner:
                     i.level = i.capacity
             
 
-        
+        # Update the time the vehicle required to reach the destination
         vehicle.travel_time = env.now - _start_travelling
-        #print(f"{int(env.now)} - {vehicle} arrives.")
         return vehicle
