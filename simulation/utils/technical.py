@@ -97,3 +97,19 @@ def consumption (edge, vehicle):
     """
     slope_factor = vehicle.positive_slope_rate if edge["grade"] >= 0 else vehicle.negative_slope_rate
     return vehicle.consumption * (1 + slope_factor * slope_to_grades(edge["grade_abs"])) / 1000 * edge["length"]
+
+
+def euclidean_distance (source, target, G):
+    """ 
+    The distance as the crow flies between two nodes.
+    
+    :param source: The starting node.
+    :param target: The ending node.
+    :param G: The graph the nodes own to.
+    :return: The distance.
+    """
+    x1, y1 = G.nodes[source]['x'], G.nodes[source]['y']
+    x2, y2 = G.nodes[target]['x'], G.nodes[target]['y']
+    return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+
+

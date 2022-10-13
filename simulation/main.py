@@ -13,7 +13,7 @@ if __name__ == "__main__":
     _start = time.time()
     sim()
     _end = time.time()
-    print("Computational time: ", round(_end - _start, 3))
+    print("Computational time: ", round(_end - _start, 3), "s")
     print("Total trips started: ", sim.total_trips)
     print("Vehicles not arrived to destination: ", sim.total_trips - sim.success_trips)
     

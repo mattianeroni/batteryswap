@@ -49,6 +49,8 @@ class Vehicle:
         self.origin = origin 
         self.destination = destination 
         self.position = origin 
+        self.travel_time = 0
+        self.covered = 0
 
     @property 
     def consumption_rate (self):
