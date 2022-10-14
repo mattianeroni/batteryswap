@@ -11,6 +11,7 @@ class ChargerPut(StorePut):
     """ A request to store a battery into the Charger """
     pass
 
+    
         
         
 class ChargerGet(StoreGet):
@@ -47,7 +48,6 @@ class Charger (Store):
         :param capacity: The maximum number of batteries allowed.
         :param power: The power erogated by the charged (e.g., ~7Kw).
         """
-        
         super().__init__(env, capacity)
         self.env = env 
         self.power = power 
@@ -60,13 +60,19 @@ class Charger (Store):
 
     @property 
     def incharge (self):
-        """ The bnumber of batteries on charge """
+        """ The number of batteries on charge """
         return sum(1 for i in self.items if i.level < i.capacity)
     
     @property 
     def charged (self):
         """ The number of fully charged batteries """
         return sum(1 for i in self.items if i.level == i.capacity)
+
+    @property 
+    def ontheside (self):
+        """ The number of batteries left to the station but with no 
+        space to be charged """
+        return len(self.put_queue)
     
         
     """ Method to store a battery """
@@ -103,10 +109,9 @@ class Charger (Store):
         and starts a charging process.
 
         :param event: The ChargerPut event.
-
         """
-        if self.level < self._capacity:
-            self.items.append(event.item)
+        if self.level < self._capacity:            
+            self.items.append(event.item)           
             event.item.start_charging = self.env.now
             event.succeed()
             self.env.process(self.__charge_process(event))

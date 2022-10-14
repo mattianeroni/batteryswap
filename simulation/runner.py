@@ -39,6 +39,7 @@ class SimulationRunner:
         # The number of trips successfully concluded
         self.failed_trips = 0
         self.nx_failed_trips = 0 
+        self.battery_failed_trips = 0
         self.total_trips = 0
         self.total_distance = 0
         self.total_travel_time = 0
@@ -123,12 +124,11 @@ class SimulationRunner:
         if vehicle.position == vehicle.destination:
             return vehicle 
         
-        #print(f"{int(env.now)} - {vehicle} starts.")
         # Register when the vehicle starts travelling
         _start_travelling = env.now 
 
         # Simulate the travelling station by station (when stations are needed)
-        while vehicle.position != target and vehicle.level > 0:
+        while source != target and vehicle.level > 0:
             
             # The path to the target (if possible), or alternatively 
             # the path to an intermediate charging station. 
@@ -136,17 +136,17 @@ class SimulationRunner:
                 path = define_path(G, source, target, vehicle)
             
             except NetworkXNoPath:
+                # No station or destination can be reached because of the 
+                # graph topology.
                 self.nx_failed_trips += 1
                 vehicle.travel_time = env.now - _start_travelling
                 return vehicle 
             
             except SimulationNoPath:
+                # No station or destination can be reached because of the 
+                # simulation algorithm.
                 self.failed_trips += 1 
                 vehicle.travel_time = env.now - _start_travelling
-                return vehicle
-
-            # No station or destination can be reached at this point.
-            if not path:
                 return vehicle
             
             # Wait for the vehicle to move
@@ -163,8 +163,9 @@ class SimulationRunner:
             # If reached node is a station charge the vehicle.
             # Fake charge for the moment...
             if G.nodes[vehicle.position]["is_station"] and vehicle.position != target: 
-                for i in vehicle.batteries:
-                    i.level = i.capacity
+                station = G.nodes[vehicle.position]["station"]
+                with station.request() as req:
+                    yield env.process(station.charge(req, vehicle, config.SHARING, config.WAIT_CHARGE))
             
 
         # Update the time the vehicle required to reach the destination

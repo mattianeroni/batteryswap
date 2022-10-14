@@ -3,6 +3,7 @@ from simpy.core import BoundClass
 from simpy.resources.resource import Request, Release
 
 from .charger import Charger
+from simulation.utils.technical import charge_time
 
 
 import collections 
@@ -57,3 +58,46 @@ class Station (simpy.Resource):
 
         self.log_queue = {}
         self.log_times = collections.deque()
+
+
+    def charge (self, req, vehicle, sharing, waitcharge):
+        """
+        Process that simulates the vehicle charging.
+
+        :param req: The request to occupy the station.
+        :param vehicle: The vehicle to charge.
+        :param sharing: True if batteries sharing is used.
+        :param waitcharge: False if even partially charged batteries can be retrieved.  
+        """
+        env, charger, power = self.env, self.chargers[vehicle.btype], self.power
+
+        # Logs for queue status
+        _start_waiting = env.now 
+        self.log_queue[env.now] = len(self.queue)
+            
+        # Wait for a free charging place
+        yield req 
+
+        # Logs for queue status
+        self.log_times.append(env.now - _start_waiting)
+        self.log_queue[env.now] = len(self.queue)
+
+        if sharing: 
+            # Remove current batteries
+            for battery in vehicle.batteries:
+                yield charger.put(battery)
+                
+            yield env.timeout(self.swaptime)
+
+            # Take new ones 
+            vehicle.batteries = [None] * vehicle.n_batteries
+            for i in range(vehicle.n_batteries):
+                battery = yield charger.get(waitcharge=waitcharge)
+                vehicle.batteries[i] = battery 
+            vehicle.batteries = tuple(vehicle.batteries)
+           
+        else:
+            # Charge current batteries
+            for battery in vehicle.batteries:
+                yield env.timeout(charge_time(battery, power))
+

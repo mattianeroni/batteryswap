@@ -7,7 +7,7 @@ from simulation.utils.technical import charge_time, level_at_time, missing_time_
 
 def putter(env, charger, battery):
     yield charger.put(battery)
-    print(f"{env.now} - stored {battery}")
+    #print(f"{env.now} - stored {battery}")
 
 
 def getter(env, charger, waitcharge=True):
@@ -54,7 +54,7 @@ def test1(env, charger, batteries):
 
 
 def test2(env, charger, batteries):
-    env.process(getter(env, charger, waitcharge=False))
+    env.process(getter(env, charger, waitcharge=True))
     
 
     yield env.timeout(20)
@@ -73,24 +73,71 @@ def test2(env, charger, batteries):
 
 
 
+def test3 (env, charger, batteries):
+
+    env.process(getter(env, charger, waitcharge=False))
+
+    for i in batteries:
+        print(i, charge_time(i, charger.power))
+        #env.process(putter(env, charger, i))
+        charger.put(i)
+        
+        
+    yield env.timeout(10)
+
+    
+    print(tuple(i.item for i in charger.put_queue))
+
+    i = yield charger.get(waitcharge=False)
+    print(f"{env.now} - ", i, i.level)
+
+    yield env.timeout(10)
+
+    print(tuple(i.item for i in charger.put_queue))
+
+    i = yield charger.get(waitcharge=False)
+    print(f"{env.now} - ", i, i.level)
+
+    yield env.timeout(10)
+
+    print(tuple(i.item for i in charger.put_queue))
+
+    i = yield charger.get(waitcharge=False)
+    print(f"{env.now} - ", i, i.level)
+    
+    print(tuple(i.item for i in charger.put_queue))
+
+    yield env.timeout(10)
+    i = yield charger.get(waitcharge=False)
+    print(f"{env.now} - ", i, i.level)
+
+    print(tuple(i.item for i in charger.put_queue))
+
+
+
+
+
+
 if __name__ == "__main__":
     tests = [
-        #test0, test1,
-        test2
+        #test0, 
+        #test1,
+        #test2,
+        test3
     ]
 
     for proc in tests:
         print(proc.__name__)
         env = simpy.Environment()
-        charger = Charger(env, capacity=3, power=10)
+        charger = Charger(env, capacity=2, power=10)
 
-        btype = BatteryType(0, 100, 0.5)
+        btype = BatteryType(0, 100)
 
         batteries = [
             Battery(btype, level=10),
-            Battery(btype, level=20),
-            Battery(btype, level=100),
-            Battery(btype, level=50),
+            Battery(btype, level=10),
+            Battery(btype, level=10),
+            Battery(btype, level=10),
         ]
 
         env.process(proc(env, charger, batteries))

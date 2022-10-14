@@ -19,10 +19,12 @@ class Config:
 
     # GENERAL
     # --------------------------------------------------------------------------------------------------------
-    SIM_TIME : int = 14_000                            # Simulation time [seconds]
+    SIM_TIME : int = 14_000                             # Simulation time [seconds]
     GRAPH_FILE : str = "./graphs/Test.graphml"          # Previously extracted graph to use 
     N_VEHICLES : int = 40                               # Number of travelling vehicles during the simulation
     SHARING : bool = True                               # If True batteries are shared otherwise not
+    WAIT_CHARGE : bool = True                           # If False vehicles can retrieve partially charged batteries too,
+                                                        # otherwise only fully charged batteries can be retrieved.
     # --------------------------------------------------------------------------------------------------------
 
     
