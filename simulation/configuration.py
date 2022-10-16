@@ -20,18 +20,19 @@ class Config:
     # GENERAL
     # --------------------------------------------------------------------------------------------------------
     SIM_TIME : int = 14_000                             # Simulation time [seconds]
-    GRAPH_FILE : str = "./graphs/Test.graphml"          # Previously extracted graph to use 
+    GRAPH_FILE : str = "./graphs/Modena.graphml"        # Previously extracted graph to use 
     N_VEHICLES : int = 40                               # Number of travelling vehicles during the simulation
     SHARING : bool = True                               # If True batteries are shared otherwise not
     WAIT_CHARGE : bool = True                           # If False vehicles can retrieve partially charged batteries too,
                                                         # otherwise only fully charged batteries can be retrieved.
+    COOLING : int = 1000
     # --------------------------------------------------------------------------------------------------------
 
     
     
     # STATIONS
     # --------------------------------------------------------------------------------------------------------
-    PERCENTAGE_STATIONS : float = 0.2                   # Percentage of nodes with a charging station [%]
+    PERCENTAGE_STATIONS : float = 0.05                   # Percentage of nodes with a charging station [%]
 
 
     # The station type used in the simulation 
@@ -91,12 +92,14 @@ class Config:
     # The possible vehicle types considered
     # :param _id: A unique id to identify the vehicle type 
     # :param n_batteries: The size of the vehicle expressed in number of batteries used
-    # :param consumption_rate: The consumption of the vehicle type [kWh / km]
+    # :param consumption: The consumption of the vehicle type [kWh / km]
+    # :param positive_slope_rate: Percentage increase of consumption for each grade of positive slope [% / °grade]
+    # :param negative_slope_rate: Percentage decrease of consumption for each grade of negative slope [% / °grade]
     VEHICLE_TYPES : Tuple[VehicleType,...] = (
         VehicleType(
             _id = 0,
             btype = BATTERY_TYPES[0],
-            n_batteries = 4,
+            n_batteries = 1,
             consumption = 0.2,
             positive_slope_rate = 0.1,
             negative_slope_rate = -0.05

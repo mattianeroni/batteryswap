@@ -60,8 +60,12 @@ class Vehicle:
         return sum(i.level for i in self.batteries)
 
     @property 
+    def capacity (self):
+        return sum(i.capacity for i in self.batteries)
+
+    @property 
     def n_batteries (self):
-        return self.btype.n_batteries
+        return self.vtype.n_batteries
 
     @property 
     def btype (self):

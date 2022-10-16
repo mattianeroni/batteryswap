@@ -31,13 +31,14 @@ class Graph(nx.MultiDiGraph):
     
 
     @classmethod 
-    def from_file (cls, env, config, elevation=True, elevation_provider="open_elevation", timeout=20):
+    def from_file (cls, env, config, stations=False, elevation=False, elevation_provider="open_elevation", timeout=20):
         """
         Method to generate the Graph object needed by the simulation.
 
         :param env: The simulation environment.
         :param config: The simulation's configuration.
 
+        :param stations: If True the station nodes are recomputed.
         :param elevation: If true the streets slope is exctacted from Open Maps (NOTE: May take time!).
         :param elevation_provider: The website trusted to get the nodes elevation data. 
         :param timeout: The maximum time allowed for a GET request to receive node elevation data.
@@ -53,7 +54,7 @@ class Graph(nx.MultiDiGraph):
         G.__dict__.update(nxG.__dict__)
         
         # Imported from a previous exportation of a Graph 
-        if G.graph.get("has_stations") == True:
+        if G.graph.get("has_stations") == True and stations == False:
             for _, node in G.nodes.items():
                 if node["is_station"]:
                     node["station"] = Station(
