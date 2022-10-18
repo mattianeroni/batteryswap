@@ -50,12 +50,35 @@ def define_path (G, source, target, vehicle, level=None):
                 return tuple(baseline_path[:last_station_pointer+1])
             # If we didn't pass through a station, a station search in neighbour nodes
             # is required.
-            raise SimulationNoPath #neighbour_station()
+            raise SimulationNoPath #neighbour_station(G, target, baseline_path[:i + 1], vehicle, level)
 
     # The destion can be reached out without any stop.
     return tuple(baseline_path) 
 
 
 
-def neighbour_station ():
-    pass    
+def neighbour_station (G, target, path, vehicle, level):
+    """
+    This method is called when the vehivle is not able to reach 
+    the destination without stopping at a charging station. 
+    
+    However, there is no charging station on the path the 
+    vehicle is covering. 
+    
+    Because of this, starting from the last visited node, a 
+    pseudo Breadth-First Search (BFS) is carried out to find 
+    a charging station on a path different from the previously 
+    defined one. 
+
+    :param G: The graph.
+    :param target: The final destination.
+    :param path: The covered nodes from the beginning of the 
+                baseline path to the last considered node.
+                NOTE: No nodes before the source are considered.
+    :param vehicle: The vehicle.
+    :param level: The current battery level.
+    :return: A new path that is currently leaving the baseline path
+            in order to reach a charging station.
+    """
+    pass
+
