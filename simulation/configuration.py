@@ -25,7 +25,7 @@ class Config:
     SHARING : bool = True                               # If True batteries are shared otherwise not
     WAIT_CHARGE : bool = True                           # If False vehicles can retrieve partially charged batteries too,
                                                         # otherwise only fully charged batteries can be retrieved.
-    COOLING : int = 1000
+    
     # --------------------------------------------------------------------------------------------------------
 
     

@@ -97,7 +97,9 @@ def consumption (edge, vehicle):
     :return: The consumption in kWh.
     """
     slope_factor = vehicle.positive_slope_rate if edge["grade"] >= 0 else vehicle.negative_slope_rate
-    return vehicle.consumption * (1 + slope_factor * slope_to_grades(edge["grade_abs"])) * edge["length"] / 1000
+    #return vehicle.consumption * (1 + slope_factor ) * edge["length"] / 1000
+
+    return vehicle.consumption * (1 + max(-1, slope_factor * slope_to_grades(edge["grade_abs"])) ) * edge["length"] / 1000
 
 
 

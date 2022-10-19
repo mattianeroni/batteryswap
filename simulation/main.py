@@ -19,6 +19,7 @@ if __name__ == "__main__":
     print("Vehicles not arrived to destination: ", sim.failed_trips)
     print("Graph topology problems: ", sim.nx_failed_trips)
     print("Relative travel time: ", sim.relative_travel_time, " hours / km")
+    print("relative travel time: ", round(sim.relative_travel_time * 60, 3), " mins / km")
     print("Average waiting time at stations: ", sim.avg_waiting_time, " s")
 
 
