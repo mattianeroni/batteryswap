@@ -59,6 +59,21 @@ class Station (simpy.Resource):
         self.log_queue = {}
         self.log_times = collections.deque()
 
+    @property
+    def chargers_level (self):
+        """ the overall level of the station including all the chargers """
+        return sum(i.level for i in self.chargers.values())
+
+    @property
+    def chargers_capacity (self):
+        """ the overall level of the station including all the chargers """
+        return sum(i.capacity for i in self.chargers.values())
+
+    @property 
+    def chargers_ontheside (self):
+        """ The number of batteries that need to be charged but are not in charge """
+        return sum(i.ontheside  for i in self.chargers.values())
+
 
     def charge (self, req, vehicle, sharing, waitcharge):
         """
@@ -85,7 +100,7 @@ class Station (simpy.Resource):
         if sharing: 
             # Remove current batteries
             for battery in vehicle.batteries:
-                yield charger.put(battery)
+                charger.put(battery)
                 
             yield env.timeout(self.swaptime)
 

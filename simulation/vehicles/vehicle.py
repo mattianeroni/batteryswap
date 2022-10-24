@@ -1,4 +1,3 @@
-from numpy import negative
 from simulation.batteries import Battery
 
 

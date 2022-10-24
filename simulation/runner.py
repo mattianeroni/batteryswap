@@ -3,15 +3,16 @@ import random
 import gc 
 import statistics 
 import functools
-import networkx as nx 
+import networkx as nx
+from networkx.algorithms.shortest_paths import astar
 from networkx.exception import NetworkXNoPath
 
-from simulation.utils.technical import path_travel_time, path_consumption, path_length
+from simulation.utils.technical import path_travel_time, path_consumption, path_length, euclidean_distance
 from simulation.utils.technical import seconds_to_hours, hours_to_seconds, m_to_km
 from simulation.utils.check import check_configuration
 from simulation.utils.algorithms import define_path
 from simulation.graph import Graph
-from simulation.vehicles import Vehicle
+from simulation.vehicles import Vehicle, Distributor
 from simulation.exceptions import SimulationNoPath, SimulationNoBattery
 
 
@@ -75,8 +76,105 @@ class SimulationRunner:
     
     def __call__(self):
         """ Method to call to execute the simulation """
+        if self.config.SHARING:
+            self.env.process(self._redistribution())
         self.env.process(self._run())
         self.env.run(self.config.SIM_TIME)    
+
+
+    def _redistribution (self):
+        """ Process simulating the redistribution of batteries """
+        env, config, G, __redistribution_trip = self.env, self.config, self.G, self.__redistribution_trip
+
+        # Wait for the end of starup time
+        yield env.timeout(config.DISTRIBUTION_STARTUP)
+
+        # Init the vehicles in charge of redistributing batteries
+        vehicles = tuple(
+            Distributor(env, 
+                speed=config.VEHICLES_SPEED, 
+                origin=random.choice(tuple(G.nodes))
+            )
+            for _ in range(config.N_REDISTRIBUTORS)
+        )
+
+        # Init the redistribution process 
+        redis_proc = [env.process(__redistribution_trip(i)) for i in vehicles]
+        
+        # Simulation loop
+        while True:
+            # Wait for at least a redistribution process to be concluded
+            ended_proc = yield env.any_of(redis_proc)
+            # Every time a redistribution process is concluded a new one 
+            # is instantiated
+            for proc, vehicle in ended_proc.items():
+                ended_proc.remove(proc)
+                redis_proc.append(env.process(__redistribution_trip(vehicle)))          
+        
+
+
+    def __redistribution_trip (self, vehicle):
+        """
+        Process used to simulate a single redistribution from. 
+        The vehicle goes form its position to the station where 
+        it can take batteries, and then to the station that needs 
+        batteries.
+
+        :param vehicle: The distributor.        
+        """
+        env, config, G = self.env, self.config, self.G
+        
+        # Extract the list of charging stations --i.e., (node_id, station object)
+        stations_list = tuple((i, node['station']) for i, node in G.nodes.items() if node['is_station'])
+        
+        # Pick the station the batteries will be retrieved from
+        # NOTE: We choose the one with the highest number of batteries on the side 
+        # (undependently on the battery type).
+        source_id, source = max(stations_list, key=lambda i: i[1].chargers_ontheside )
+        
+        # If there are no batteries on the side, no operation is carried out.
+        if source.ontheside == 0:
+            return vehicle 
+        
+        # Pick the station the batteries will be brought to
+        # NOTE: We choose the one with the highest difference between capacity and level 
+        # (undependently on the battery type).
+        target_id, target = max(stations_list, key=lambda i: i[1].chargers_capacity - i[1].chargers_level )
+        
+        # Move to the source station to retrieve batteries
+        path = astar.astar_path(G, vehicle.position, target_id, heuristic=functools.partial(euclidean_distance, G=G), weight="length")
+        yield env.timeout(path_travel_time(G, path, vehicle))
+        vehicle.position = source_id
+
+        # Reconsider eventual suspension of the oepration
+        if source.ontheside == 0:
+            return vehicle 
+
+        # Retrieve batteries keeping them split by type
+        batteries = {btype: [] for btype in config.BATTERY_TYPES}
+
+        for btype, charger in source.chargers.items():
+            batteries[btype].extend([ event.item for event in charger.put_queue ])
+            charger.put_queue = []
+
+        # Load batteries 
+        yield env.timeout(config.DISTRIBUTOR_LOADING_TIME)
+        
+        # Move to the target station to bring batteries 
+        path = astar.astar_path(G, source_id, target_id, heuristic=functools.partial(euclidean_distance, G=G), weight="length")
+        yield env.timeout(path_travel_time(G, path, vehicle))
+        vehicle.position = target_id 
+
+        # Unload batteries 
+        yield env.timeout(config.DISTRIBUTOR_LOADING_TIME)
+
+        for btype, batteries_list in batteries:
+            charger = target.chargers[btype]
+            for i in batteries_list:
+                charger.put(i)
+        
+        return vehicle
+            
 
 
 

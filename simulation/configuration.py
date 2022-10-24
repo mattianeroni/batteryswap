@@ -22,6 +22,8 @@ class Config:
     SIM_TIME : int = 14_000                             # Simulation time [seconds]
     GRAPH_FILE : str = "./graphs/Modena.graphml"        # Previously extracted graph to use 
     N_VEHICLES : int = 40                               # Number of travelling vehicles during the simulation
+    N_REDISTRIBUTORS : int = 10                         # Number of vehicles in charge of redistristributing batteries
+    DISTRIBUTION_STARTUP : int = 500                    # The simulation time before that the redistribution of batteries starts
     SHARING : bool = True                               # If True batteries are shared otherwise not
     WAIT_CHARGE : bool = True                           # If False vehicles can retrieve partially charged batteries too,
                                                         # otherwise only fully charged batteries can be retrieved.
@@ -116,6 +118,8 @@ class Config:
     # TIMES 
     # --------------------------------------------------------------------------------------------------------
     SWAP_TIME : int = 30                                # The time (in seconds) required to swap batteries
+    DISTRIBUTOR_LOADING_TIME : int = 60                 # The time (in seconds) required by the distributors 
+                                                        # to load and unload batteries.
     # --------------------------------------------------------------------------------------------------------
 
 
