@@ -86,8 +86,7 @@ class SimulationRunner:
         """ Process simulating the redistribution of batteries """
         env, config, G, __redistribution_trip = self.env, self.config, self.G, self.__redistribution_trip
 
-        # Wait for the end of starup time
-        yield env.timeout(config.DISTRIBUTION_STARTUP)
+        yield env.timeout(config.DISTRIBUTION_FREQUENCY)
 
         # Init the vehicles in charge of redistributing batteries
         vehicles = tuple(
@@ -99,17 +98,13 @@ class SimulationRunner:
         )
 
         # Init the redistribution process 
-        redis_proc = [env.process(__redistribution_trip(i)) for i in vehicles]
+        redis_proc = tuple(env.process(__redistribution_trip(i)) for i in vehicles)
         
         # Simulation loop
         while True:
-            # Wait for at least a redistribution process to be concluded
-            ended_proc = yield env.any_of(redis_proc)
-            # Every time a redistribution process is concluded a new one 
-            # is instantiated
-            for proc, vehicle in ended_proc.items():
-                ended_proc.remove(proc)
-                redis_proc.append(env.process(__redistribution_trip(vehicle)))          
+            # Wait for redistributions to be concluded before starting a new round
+            yield env.all_of(redis_proc) and env.timeout(config.DISTRIBUTION_FREQUENCY)
+            redis_proc = tuple(env.process(__redistribution_trip(i)) for i in vehicles)     
         
 
 
@@ -131,23 +126,24 @@ class SimulationRunner:
         # NOTE: We choose the one with the highest number of batteries on the side 
         # (undependently on the battery type).
         source_id, source = max(stations_list, key=lambda i: i[1].chargers_ontheside )
-        
-        # If there are no batteries on the side, no operation is carried out.
-        if source.ontheside == 0:
+
+        # Reconsider eventual suspension of the operation
+        if source.chargers_ontheside == 0:
             return vehicle 
-        
+
         # Pick the station the batteries will be brought to
         # NOTE: We choose the one with the highest difference between capacity and level 
         # (undependently on the battery type).
-        target_id, target = max(stations_list, key=lambda i: i[1].chargers_capacity - i[1].chargers_level )
+        target_id, target = max(stations_list, key=lambda i: i[1].chargers_capacity - i[1].chargers_level )     
+        
         
         # Move to the source station to retrieve batteries
         path = astar.astar_path(G, vehicle.position, target_id, heuristic=functools.partial(euclidean_distance, G=G), weight="length")
         yield env.timeout(path_travel_time(G, path, vehicle))
         vehicle.position = source_id
 
-        # Reconsider eventual suspension of the oepration
-        if source.ontheside == 0:
+        # Reconsider eventual suspension of the operation
+        if source.chargers_ontheside == 0:
             return vehicle 
 
         # Retrieve batteries keeping them split by type
@@ -159,7 +155,7 @@ class SimulationRunner:
 
         # Load batteries 
         yield env.timeout(config.DISTRIBUTOR_LOADING_TIME)
-        
+
         # Move to the target station to bring batteries 
         path = astar.astar_path(G, source_id, target_id, heuristic=functools.partial(euclidean_distance, G=G), weight="length")
         yield env.timeout(path_travel_time(G, path, vehicle))
@@ -168,7 +164,7 @@ class SimulationRunner:
         # Unload batteries 
         yield env.timeout(config.DISTRIBUTOR_LOADING_TIME)
 
-        for btype, batteries_list in batteries:
+        for btype, batteries_list in batteries.items():
             charger = target.chargers[btype]
             for i in batteries_list:
                 charger.put(i)

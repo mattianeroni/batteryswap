@@ -23,7 +23,7 @@ class Config:
     GRAPH_FILE : str = "./graphs/Modena.graphml"        # Previously extracted graph to use 
     N_VEHICLES : int = 40                               # Number of travelling vehicles during the simulation
     N_REDISTRIBUTORS : int = 10                         # Number of vehicles in charge of redistristributing batteries
-    DISTRIBUTION_STARTUP : int = 500                    # The simulation time before that the redistribution of batteries starts
+    DISTRIBUTION_FREQUENCY : int = 1500                 # Time (in seconds) between a redistribution and the next one
     SHARING : bool = True                               # If True batteries are shared otherwise not
     WAIT_CHARGE : bool = True                           # If False vehicles can retrieve partially charged batteries too,
                                                         # otherwise only fully charged batteries can be retrieved.
