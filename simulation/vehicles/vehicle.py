@@ -5,7 +5,7 @@ class VehicleType:
 
     """ A type of vehicle managed by the simulation """
     
-    def __init__(self, _id, btype, n_batteries, consumption, positive_slope_rate, negative_slope_rate):
+    def __init__(self, _id, btype_id, n_batteries, consumption, positive_slope_rate, negative_slope_rate, btypes):
         """
         :param _id: A unique id that identifies the vehicle type 
         :param btype: The battery type 
@@ -17,7 +17,8 @@ class VehicleType:
                                     slope. Expressed in [% / grade].
         """
         self._id = _id 
-        self.btype = btype 
+        self.btype_id = btype_id
+        self.btype = btypes[btype_id]
         self.n_batteries = n_batteries
         self.consumption = consumption
         self.positive_slope_rate = positive_slope_rate 

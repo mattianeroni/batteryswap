@@ -52,6 +52,7 @@ class Graph(nx.MultiDiGraph):
 
         G = cls.__new__(cls)
         G.__dict__.update(nxG.__dict__)
+
         
         # Imported from a previous exportation of a Graph 
         if G.graph.get("has_stations") == True and stations == False:

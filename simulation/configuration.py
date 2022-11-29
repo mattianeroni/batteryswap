@@ -19,9 +19,9 @@ class Config:
 
     # GENERAL
     # --------------------------------------------------------------------------------------------------------
-    SIM_TIME : int = 14_000                             # Simulation time [seconds]
-    GRAPH_FILE : str = "./graphs/Modena.graphml"        # Previously extracted graph to use 
-    N_VEHICLES : int = 40                               # Number of travelling vehicles during the simulation
+    SIM_TIME : int = 5_000                             # Simulation time [seconds]
+    GRAPH_FILE : str = "./graphs/Barcelona.graphml"        # Previously extracted graph to use 
+    N_VEHICLES : int = 500                               # Number of travelling vehicles during the simulation
     N_REDISTRIBUTORS : int = 10                         # Number of vehicles in charge of redistristributing batteries
     DISTRIBUTION_FREQUENCY : int = 1500                 # Time (in seconds) between a redistribution and the next one
     SHARING : bool = True                               # If True batteries are shared otherwise not
@@ -34,7 +34,7 @@ class Config:
     
     # STATIONS
     # --------------------------------------------------------------------------------------------------------
-    PERCENTAGE_STATIONS : float = 0.05                   # Percentage of nodes with a charging station [%]
+    PERCENTAGE_STATIONS : float = 0.02                   # Percentage of nodes with a charging station [%]
 
 
     # The station type used in the simulation 
@@ -46,22 +46,17 @@ class Config:
     STATION_TYPES : Tuple[StationType, ...] = (
         StationType(
             _id = 0,
-            capacity = 2,
+            capacity = 1,
             power = 11,
-            chargers_capacities = (20, 15, 10)
+            chargers_capacities = (10, 10, 10)
         ),
         StationType(
             _id = 1,
-            capacity = 4,
-            power = 20,
-            chargers_capacities = (30, 25, 25)
+            capacity = 2,
+            power = 11,
+            chargers_capacities = (10, 10, 10)
         ),
-        StationType(
-            _id = 2,
-            capacity = 6,
-            power = 50,
-            chargers_capacities = (40, 35, 30)
-        ),
+
     )
 
     STATION_SELECTOR : Callable = functools.partial(random.choice)
@@ -77,7 +72,7 @@ class Config:
     # :param capacity: The capacity of batteries types in kWh (an indicator of size of batteries)
     BATTERY_TYPES : Tuple[BatteryType, ...] = (
         BatteryType(_id = 0, capacity = 10),
-        BatteryType(_id = 1, capacity = 20),
+        BatteryType(_id = 1, capacity = 15),
         BatteryType(_id = 2, capacity = 20),
     )
 
@@ -100,12 +95,31 @@ class Config:
     VEHICLE_TYPES : Tuple[VehicleType,...] = (
         VehicleType(
             _id = 0,
-            btype = BATTERY_TYPES[0],
+            btype_id = 0,
             n_batteries = 1,
             consumption = 0.2,
             positive_slope_rate = 0.1,
-            negative_slope_rate = -0.05
-        ),        
+            negative_slope_rate = -0.05,
+            btypes=BATTERY_TYPES,
+        ),
+        VehicleType(
+            _id = 1,
+            btype_id = 1,
+            n_batteries = 1,
+            consumption = 0.2,
+            positive_slope_rate = 0.1,
+            negative_slope_rate = -0.05,
+            btypes=BATTERY_TYPES,
+        ),       
+        VehicleType(
+            _id = 2,
+            btype_id = 2,
+            n_batteries = 1,
+            consumption = 0.2,
+            positive_slope_rate = 0.1,
+            negative_slope_rate = -0.05,
+            btypes=BATTERY_TYPES,
+        ),       
 
     )                                                   
 

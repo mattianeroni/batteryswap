@@ -115,4 +115,5 @@ class Station (simpy.Resource):
             # Charge current batteries
             for battery in vehicle.batteries:
                 yield env.timeout(charge_time(battery, power))
+                battery.level = battery.capacity
 

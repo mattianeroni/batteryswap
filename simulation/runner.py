@@ -205,22 +205,19 @@ class SimulationRunner:
         while True:
             
             ended_proc = yield env.any_of(vehicles_proc)
-            vehicles_proc = [proc for proc in vehicles_proc if not proc in ended_proc.keys()]
+
+            vehicles_proc = [proc for proc in vehicles_proc if proc not in set(ended_proc.keys())]
+
+            for vehicle in ended_proc.values():
+                vehicle.destination = random.choices(tuple(G.nodes), weights=(i["endp"] for i in G.nodes.values()), k=1)[0]
+                vehicle.origin = vehicle.position = random.choices(tuple(G.nodes), weights=(i["startp"] for i in G.nodes.values()), k=1)[0]
+                vehicle.travel_time = 0
+                vehicle.covered = 0
+                self.total_trips += 1
+                
+            vehicles_proc.extend([env.process( __trip( vehicle ) ) for vehicle in ended_proc.values()])
             
-            diff = config.N_VEHICLES - len(vehicles_proc)
-            self.total_trips += diff 
-            vehicles_proc.extend([
-                env.process(
-                    __trip(
-                        Vehicle(env, 
-                            vtype=config.VEHICLE_SELECTOR(config.VEHICLE_TYPES), 
-                            speed=config.VEHICLES_SPEED,
-                            origin=random.choices(tuple(G.nodes), weights=(i["startp"] for i in G.nodes.values()), k=1)[0],
-                            destination=random.choices(tuple(G.nodes), weights=(i["endp"] for i in G.nodes.values()), k=1)[0],
-                        )
-                    )
-                ) for _ in range(diff)
-            ])
+
 
 
     def __trip (self, vehicle):
@@ -232,9 +229,6 @@ class SimulationRunner:
         env, config, G = self.env, self.config, self.G
         source, target = vehicle.origin, vehicle.destination
 
-        # If the vehicle is alreay arrived the process terminates
-        if vehicle.position == vehicle.destination:
-            return vehicle 
 
         # Simulate the travelling station by station (when stations are needed)
         while source != target and vehicle.level > 0:
@@ -277,7 +271,7 @@ class SimulationRunner:
                 station = G.nodes[vehicle.position]["station"]
                 with station.request() as req:
                     yield env.process(station.charge(req, vehicle, config.SHARING, config.WAIT_CHARGE))
-            
+
 
             # Update the time the vehicle required to reach the destination
             vehicle.travel_time += env.now - _start_travelling

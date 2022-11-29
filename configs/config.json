@@ -1,0 +1,94 @@
+{
+    "BATTERY_SELECTOR": {
+        "args": {
+            "beta": 0.4
+        },
+        "function": "biased_randomised_selection"
+    },
+    "BATTERY_TYPES": [
+        {
+            "_id": 0,
+            "capacity": 10
+        },
+        {
+            "_id": 1,
+            "capacity": 15
+        },
+        {
+            "_id": 2,
+            "capacity": 20
+        }
+    ],
+    "DISTRIBUTION_FREQUENCY": 1500,
+    "DISTRIBUTOR_LOADING_TIME": 60,
+    "GRAPH_FILE": "./graphs/Barcelona.graphml",
+    "N_REDISTRIBUTORS": 10,
+    "N_VEHICLES": 1100,
+    "PERCENTAGE_STATIONS": 0.02,
+    "SHARING": true,
+    "SIM_TIME": 1000,
+    "STATION_SELECTOR": {
+        "args": {},
+        "function": "choice"
+    },
+    "STATION_TYPES": [
+        {
+            "_id": 0,
+            "capacity": 1,
+            "chargers_capacities": [
+                10,
+                10,
+                10
+            ],
+            "power": 11
+        },
+        {
+            "_id": 1,
+            "capacity": 1,
+            "chargers_capacities": [
+                10,
+                10,
+                10
+            ],
+            "power": 11
+        }
+    ],
+    "SWAP_TIME": 30,
+    "VEHICLES_SPEED": 16,
+    "VEHICLE_SELECTOR": {
+        "args": {
+            "beta": 0.4
+        },
+        "function": "biased_randomised_selection"
+    },
+    "VEHICLE_TYPES": [
+        {
+            "_id": 0,
+            "btype": null,
+            "btype_id": 0,
+            "consumption": 0.2,
+            "n_batteries": 1,
+            "negative_slope_rate": -0.05,
+            "positive_slope_rate": 0.1
+        },
+        {
+            "_id": 1,
+            "btype": null,
+            "btype_id": 1,
+            "consumption": 0.2,
+            "n_batteries": 1,
+            "negative_slope_rate": -0.05,
+            "positive_slope_rate": 0.1
+        },
+        {
+            "_id": 2,
+            "btype": null,
+            "btype_id": 2,
+            "consumption": 0.2,
+            "n_batteries": 1,
+            "negative_slope_rate": -0.05,
+            "positive_slope_rate": 0.1
+        }
+    ],
+    "WAIT_CHARGE": true
+}
