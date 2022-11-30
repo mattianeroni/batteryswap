@@ -90,5 +90,5 @@
             "positive_slope_rate": 0.1
         }
     ],
-    "WAIT_CHARGE": true
+    "WAIT_CHARGE": false
 }

@@ -1,5 +1,7 @@
 from simulation.batteries import Battery
 
+import random
+
 
 class VehicleType:
 
@@ -45,15 +47,13 @@ class Vehicle:
         """
         self.env = env 
         self.vtype = vtype 
-        self.batteries = tuple(Battery(vtype.btype) for _ in range(vtype.n_batteries))
+        self.batteries = tuple(Battery(vtype.btype, level=random.random() * vtype.btype.capacity) 
+                            for _ in range(vtype.n_batteries))
         self.speed = speed 
         
         self.origin = origin 
         self.destination = destination 
         self.position = origin 
-        self.travel_time = 0
-        self.covered = 0
-
 
     @property 
     def level (self):
@@ -95,7 +95,7 @@ class Vehicle:
         """
         uenergy = energy / len(self.batteries)
         for b in self.batteries:
-            b.level -= uenergy
+            b.level = max(0, b.level - uenergy)
 
         
     

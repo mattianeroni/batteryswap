@@ -68,6 +68,8 @@ class SimulationRunner:
             if i['is_station']:
                 total_log_times.extend(i['station'].log_times)
         
+        print(total_log_times)
+        
         if len(total_log_times) == 0:
             return 0
 
@@ -179,8 +181,12 @@ class SimulationRunner:
         env, config, G, __trip = self.env, self.config, self.G, self.__trip
 
         # Initialise vehicles processes
-        _origins = tuple(random.choices(tuple(G.nodes), weights=(i["startp"] for i in G.nodes.values()), k=config.N_VEHICLES))
-        _dests = tuple(random.choices(tuple(G.nodes), weights=(i["endp"] for i in G.nodes.values()), k=config.N_VEHICLES))
+        origin_probs = tuple(i["startp"] for i in G.nodes.values())
+        dest_probs = tuple(i["endp"] for i in G.nodes.values())
+
+        _origins = tuple(random.choices(tuple(G.nodes), weights=origin_probs, k=config.N_VEHICLES))
+        _dests = tuple(random.choices(tuple(G.nodes), weights=dest_probs, k=config.N_VEHICLES))
+
         vehicles_proc = [ 
             env.process(    
                 __trip(
@@ -206,17 +212,25 @@ class SimulationRunner:
             
             ended_proc = yield env.any_of(vehicles_proc)
 
-            vehicles_proc = [proc for proc in vehicles_proc if proc not in set(ended_proc.keys())]
-
-            for vehicle in ended_proc.values():
-                vehicle.destination = random.choices(tuple(G.nodes), weights=(i["endp"] for i in G.nodes.values()), k=1)[0]
-                vehicle.origin = vehicle.position = random.choices(tuple(G.nodes), weights=(i["startp"] for i in G.nodes.values()), k=1)[0]
-                vehicle.travel_time = 0
-                vehicle.covered = 0
-                self.total_trips += 1
-                
-            vehicles_proc.extend([env.process( __trip( vehicle ) ) for vehicle in ended_proc.values()])
+            for proc in ended_proc.keys():
+                vehicles_proc.remove(proc)
             
+            diff = config.N_VEHICLES - len(vehicles_proc)
+            self.total_trips += diff 
+
+            vehicles_proc.extend([
+                env.process( 
+                    __trip( 
+                        Vehicle(
+                            env,
+                            vtype=config.VEHICLE_SELECTOR(config.VEHICLE_TYPES),
+                            speed=config.VEHICLES_SPEED,
+                            origin=random.choices(tuple(G.nodes), weights=origin_probs, k=1)[0],
+                            destination=random.choices(tuple(G.nodes), weights=dest_probs, k=1)[0],
+                        )
+                    )
+                ) for _ in range(diff)
+            ])
 
 
 
@@ -262,20 +276,16 @@ class SimulationRunner:
             vehicle.consume(energy_used)
 
             # Update the distance covered by the vehicle
-            vehicle.covered += path_length(G, path)
-            self.total_distance += vehicle.covered
+            self.total_distance += path_length(G, path)
 
             # If reached node is a station charge the vehicle.
-            # Fake charge for the moment...
             if G.nodes[vehicle.position]["is_station"] and vehicle.position != target: 
                 station = G.nodes[vehicle.position]["station"]
                 with station.request() as req:
                     yield env.process(station.charge(req, vehicle, config.SHARING, config.WAIT_CHARGE))
 
-
             # Update the time the vehicle required to reach the destination
-            vehicle.travel_time += env.now - _start_travelling
-            self.total_travel_time += vehicle.travel_time
+            self.total_travel_time += env.now - _start_travelling
 
         # When the trip is concluded the vehicle is returned
         return vehicle

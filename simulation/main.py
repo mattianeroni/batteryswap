@@ -11,8 +11,18 @@ if __name__ == "__main__":
 
     config = read_configuration("./configs/config.json")
 
-    sim = SimulationRunner(config, stations=False)
 
+    sim = SimulationRunner(config, stations=True)
+    sim()
+    G = sim.G 
+
+    for i in G.nodes.values():
+        if i['is_station']:
+            station = i['station']
+            print(station.log_times)
+
+
+    """
     
 
 
@@ -42,5 +52,5 @@ if __name__ == "__main__":
     print("Relative travel time: ", round(sim.relative_travel_time * 60, 3), " mins / km")
     print("Average waiting time at stations: ", sim.avg_waiting_time, " s")
     
-
+    """
     

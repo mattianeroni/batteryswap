@@ -7,7 +7,7 @@ from simulation.utils.technical import charge_time, level_at_time, missing_time_
 
 def putter(env, charger, battery):
     yield charger.put(battery)
-    #print(f"{env.now} - stored {battery}")
+    print(f"{env.now} - stored {battery}")
 
 
 def getter(env, charger, waitcharge=True):
@@ -75,44 +75,34 @@ def test2(env, charger, batteries):
 
 def test3 (env, charger, batteries):
 
-    env.process(getter(env, charger, waitcharge=False))
+    env.process(getter(env, charger, waitcharge=True))
 
     for i in batteries:
-        print(i, charge_time(i, charger.power))
         #env.process(putter(env, charger, i))
         charger.put(i)
         
-        
+   
     yield env.timeout(10)
 
-    
-    print(tuple(i.item for i in charger.put_queue))
-
-    i = yield charger.get(waitcharge=False)
-    print(f"{env.now} - ", i, i.level)
+    i = yield env.process(getter(env, charger, waitcharge=True))
 
     yield env.timeout(10)
 
-    print(tuple(i.item for i in charger.put_queue))
-
-    i = yield charger.get(waitcharge=False)
-    print(f"{env.now} - ", i, i.level)
+    i = yield  env.process(getter(env, charger, waitcharge=True))
 
     yield env.timeout(10)
 
-    print(tuple(i.item for i in charger.put_queue))
-
-    i = yield charger.get(waitcharge=False)
-    print(f"{env.now} - ", i, i.level)
-    
-    print(tuple(i.item for i in charger.put_queue))
+    i = yield  env.process(getter(env, charger, waitcharge=True))
 
     yield env.timeout(10)
-    i = yield charger.get(waitcharge=False)
-    print(f"{env.now} - ", i, i.level)
 
-    print(tuple(i.item for i in charger.put_queue))
 
+
+    i = yield  env.process(getter(env, charger, waitcharge=True))
+
+
+    print(charger.charging_processes)
+    print(charger.items)
 
 
 
@@ -120,9 +110,7 @@ def test3 (env, charger, batteries):
 
 if __name__ == "__main__":
     tests = [
-        #test0, 
-        #test1,
-        #test2,
+        
         test3
     ]
 
