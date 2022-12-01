@@ -21,25 +21,18 @@ class SimulationRunner:
     
     """ An instance of this class represents a simulation to be executed """
     
-    def __init__(self, config, stations=False, elevation=False, elevation_provider="open_elevation", timeout=20):
+    def __init__(self, env, config, G ):
         """
         When a runner is instantiated, a simulation environment is created, the graph is imported 
         according to the spacification in the Config instance, and some checks on the feasibility 
         of the configuration are made. 
-
-        :param config: The configuration of the simulation. 
-        :param stations: If True the station nodes are recomputed.
-        :param elevation: If True the streets slope is exctacted from Open Maps (NOTE: May take time!).
-        :param elevation_provider: The website trusted to get the nodes elevation data. 
-        :param timeout: The maximum time allowed for a GET request to receive node elevation data.
         """
-        self.env = simpy.Environment()
+        self.env = env
         
         self.config = config
         assert check_configuration(config), "Inconsistencies detected in the configuration."
         
-        self.G = Graph.from_file(self.env, config, stations=stations, elevation=elevation, elevation_provider=elevation_provider, timeout=timeout)
-        
+        self.G = G
 
         # The number of trips successfully concluded
         self.failed_trips = 0
@@ -68,8 +61,6 @@ class SimulationRunner:
             if i['is_station']:
                 total_log_times.extend(i['station'].log_times)
         
-        print(total_log_times)
-        
         if len(total_log_times) == 0:
             return 0
 
@@ -80,9 +71,17 @@ class SimulationRunner:
         """ Method to call to execute the simulation """
         if self.config.SHARING:
             self.env.process(self._redistribution())
+        self.env.process(self._checker())
         self.env.process(self._run())
+        print("Simulation...", end="")
         self.env.run(self.config.SIM_TIME)    
+        print("done")
 
+
+    def _checker (self):
+        while True:
+            yield self.env.timeout(1000)
+            print(self.env.now)
 
     def _redistribution (self):
         """ Process simulating the redistribution of batteries """
@@ -153,7 +152,7 @@ class SimulationRunner:
 
         for btype, charger in source.chargers.items():
             batteries[btype].extend([ event.item for event in charger.put_queue ])
-            charger.put_queue = []
+            charger.reset_put_queue()
 
         # Load batteries 
         yield env.timeout(config.DISTRIBUTOR_LOADING_TIME)
@@ -283,7 +282,7 @@ class SimulationRunner:
                 station = G.nodes[vehicle.position]["station"]
                 with station.request() as req:
                     yield env.process(station.charge(req, vehicle, config.SHARING, config.WAIT_CHARGE))
-
+            
             # Update the time the vehicle required to reach the destination
             self.total_travel_time += env.now - _start_travelling
 

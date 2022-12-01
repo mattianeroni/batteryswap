@@ -1,0 +1,17 @@
+Computational time:  2554.332 s
+Total trips started:  45440
+Vehicles not arrived to destination:  476
+Graph topology problems:  1489
+Relative travel time:  0.017  hours / km
+Relative travel time:  1.02  mins / km
+Average waiting time at stations:  1.816  s
+-------------------------------------------------------------------------
+
+
+Computational time:  712.434 s
+Total trips started:  15770
+Vehicles not arrived to destination:  176
+Graph topology problems:  515
+Relative travel time:  0.025  hours / km
+Relative travel time:  1.5  mins / km
+Average waiting time at stations:  4311.714  s

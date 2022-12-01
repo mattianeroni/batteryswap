@@ -93,8 +93,6 @@ class Station (simpy.Resource):
         # Wait for a free charging place
         yield req 
 
-        print(int(env.now), f"{id(vehicle)} enter station")
-
         # Logs for queue status
         self.log_times.append(env.now - _start_waiting)
         self.log_queue[env.now] = len(self.queue)
@@ -103,19 +101,15 @@ class Station (simpy.Resource):
             # Remove current batteries
             for battery in vehicle.batteries:
                 charger.put(battery)
-
-            print(int(env.now), f"{id(vehicle)} removed batteries")
                 
             yield env.timeout(self.swaptime)
 
-            print(int(env.now), f"{id(vehicle)} after swap time")
 
             # Take new ones 
             new_batteries = [None] * vehicle.n_batteries
             for i in range(vehicle.n_batteries):
                 battery = yield charger.get(waitcharge=waitcharge)
                 new_batteries[i] = battery 
-                print(int(env.now), f"{id(vehicle)} got battery {i} of {vehicle.n_batteries}")
             vehicle.batteries = tuple(new_batteries)
            
         else:

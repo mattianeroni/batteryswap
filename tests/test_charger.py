@@ -1,6 +1,6 @@
 import simpy 
 
-from simulation.stations.charger import Charger 
+from simulation.stations.charger import Charger
 from simulation.batteries import Battery, BatteryType
 from simulation.utils.technical import charge_time, level_at_time, missing_time_to_charge, hours_to_seconds, seconds_to_hours
 
@@ -74,35 +74,25 @@ def test2(env, charger, batteries):
 
 
 def test3 (env, charger, batteries):
+    print(batteries)
 
-    env.process(getter(env, charger, waitcharge=True))
+    env.process(getter(env, charger, waitcharge=False))
 
     for i in batteries:
-        #env.process(putter(env, charger, i))
-        charger.put(i)
+        env.process(putter(env, charger, i))
         
-   
     yield env.timeout(10)
+    print(charger.put_queue)
+   
+    #yield env.timeout(0)
+    print(charger.items)
 
     i = yield env.process(getter(env, charger, waitcharge=True))
-
-    yield env.timeout(10)
-
-    i = yield  env.process(getter(env, charger, waitcharge=True))
-
-    yield env.timeout(10)
-
-    i = yield  env.process(getter(env, charger, waitcharge=True))
-
-    yield env.timeout(10)
+    i = yield env.process(getter(env, charger, waitcharge=True))
+    i = yield env.process(getter(env, charger, waitcharge=False))
 
 
 
-    i = yield  env.process(getter(env, charger, waitcharge=True))
-
-
-    print(charger.charging_processes)
-    print(charger.items)
 
 
 

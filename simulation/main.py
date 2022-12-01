@@ -1,31 +1,25 @@
 from simulation.runner import SimulationRunner
 from simulation.utils.io import export_configuration, read_configuration
 from simulation.configuration import Config 
+from simulation.graph import Graph
 
 
 import matplotlib.pyplot as plt 
 import time 
+import simpy 
 
 
 if __name__ == "__main__":
 
-    config = read_configuration("./configs/config.json")
-
-
-    sim = SimulationRunner(config, stations=True)
-    sim()
-    G = sim.G 
-
-    for i in G.nodes.values():
-        if i['is_station']:
-            station = i['station']
-            print(station.log_times)
-
-
     """
+    env = simpy.Environment()
+
+    config = read_configuration("./configs/config.json")
+    G = Graph.from_file(env, config, stations=False, elevation=False, elevation_provider="open_elevation", timeout=20)
     
 
 
+    sim = SimulationRunner(env, config, G)
     _start = time.time()
     sim()
     _end = time.time()
@@ -35,12 +29,15 @@ if __name__ == "__main__":
     print("Graph topology problems: ", sim.nx_failed_trips)
     print("Relative travel time: ", sim.relative_travel_time, " hours / km")
     print("Relative travel time: ", round(sim.relative_travel_time * 60, 3), " mins / km")
-    print("Average waiting time at stations: ", sim.avg_waiting_time, " s")
+    print("Average waiting time at stations: ", round(sim.avg_waiting_time, 3), " s")
 
     print("-------------------------------------------------------------------------")
-
+    """
     config = read_configuration("./configs/config.json")
-    sim = SimulationRunner(config, stations=False)
+    config.SHARING = False
+    env = simpy.Environment()
+    G = Graph.from_file(env, config, stations=False, elevation=False, elevation_provider="open_elevation", timeout=20)
+    sim = SimulationRunner(env, config, G)
     _start = time.time()
     sim()
     _end = time.time()
@@ -50,7 +47,5 @@ if __name__ == "__main__":
     print("Graph topology problems: ", sim.nx_failed_trips)
     print("Relative travel time: ", sim.relative_travel_time, " hours / km")
     print("Relative travel time: ", round(sim.relative_travel_time * 60, 3), " mins / km")
-    print("Average waiting time at stations: ", sim.avg_waiting_time, " s")
-    
-    """
+    print("Average waiting time at stations: ", round(sim.avg_waiting_time, 3), " s")
     
