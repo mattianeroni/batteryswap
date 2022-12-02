@@ -52,7 +52,6 @@ class SimulationRunner:
         """ The relative travel time in [hours / km] """
         return round(seconds_to_hours(self.total_travel_time) / m_to_km(self.total_distance), 3)
 
-
     @property 
     def avg_waiting_time (self):
         """ The average waiting time at stations """
@@ -65,6 +64,20 @@ class SimulationRunner:
             return 0
 
         return statistics.mean( total_log_times )
+
+
+    @property 
+    def avg_queue (self):
+        """ The average queue at stations """
+        total = []
+        for i in self.G.nodes.values():
+            if i['is_station']:
+                total.extend( list(i['station'].log_queue.values()) )
+        
+        if len(total) == 0:
+            return 0
+
+        return statistics.mean( total )
 
     
     def __call__(self):

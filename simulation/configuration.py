@@ -20,8 +20,8 @@ class Config:
     # GENERAL
     # --------------------------------------------------------------------------------------------------------
     SIM_TIME : int = 5_000                             # Simulation time [seconds]
-    GRAPH_FILE : str = "./graphs/Barcelona.graphml"        # Previously extracted graph to use 
-    N_VEHICLES : int = 500                               # Number of travelling vehicles during the simulation
+    GRAPH_FILE : str = "./graphs/Barcelona.graphml"    # Previously extracted graph to use 
+    N_VEHICLES : int = 500                             # Number of travelling vehicles during the simulation
     N_REDISTRIBUTORS : int = 10                         # Number of vehicles in charge of redistristributing batteries
     DISTRIBUTION_FREQUENCY : int = 1500                 # Time (in seconds) between a redistribution and the next one
     SHARING : bool = True                               # If True batteries are shared otherwise not
